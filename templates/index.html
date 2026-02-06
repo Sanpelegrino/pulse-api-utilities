@@ -1,0 +1,2833 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Hello World App</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            background: #f8f9fa;
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: flex-start;
+            color: #1f2937;
+            padding: 20px;
+            box-sizing: border-box;
+            overflow-x: hidden;
+        }
+        
+        @media (max-width: 768px) {
+            body {
+                padding: 10px;
+            }
+        }
+        
+        .container {
+            text-align: center;
+            background: #ffffff;
+            border-radius: 8px;
+            padding: 40px 30px;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1), 0 1px 2px rgba(0, 0, 0, 0.06);
+            border: 1px solid #e5e7eb;
+            max-width: 95vw;
+            width: 100%;
+            margin: 20px auto;
+            animation: fadeIn 1s ease-in;
+            box-sizing: border-box;
+        }
+        
+        .title {
+            font-size: clamp(2rem, 5vw, 3rem);
+            font-weight: 600;
+            margin-bottom: 8px;
+            color: #1f2937;
+            line-height: 1.2;
+        }
+        
+        .subtitle {
+            font-size: clamp(1rem, 2.5vw, 1.1rem);
+            margin-bottom: 32px;
+            color: #6b7280;
+            line-height: 1.4;
+            font-weight: 400;
+        }
+        
+        .button {
+            background: #1f5f99;
+            border: none;
+            color: white;
+            padding: 12px 24px;
+            font-size: 0.95rem;
+            font-weight: 500;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
+        }
+        
+        .button:hover {
+            background: #1e4a73;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+        
+        .api-response {
+            margin-top: 20px;
+            padding: 16px;
+            background: #f3f4f6;
+            border: 1px solid #e5e7eb;
+            border-radius: 6px;
+            display: none;
+            font-family: 'Monaco', 'Menlo', 'Ubuntu Mono', monospace;
+            font-size: 0.85rem;
+            color: #374151;
+        }
+        
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        
+        .wave {
+            animation: wave 2s infinite;
+            display: inline-block;
+        }
+        
+        @keyframes wave {
+            0%, 100% { transform: rotate(0deg); }
+            25% { transform: rotate(20deg); }
+            75% { transform: rotate(-20deg); }
+        }
+        
+        /* Tab Styles */
+        .tabs {
+            display: flex;
+            margin-bottom: 32px;
+            border-bottom: 1px solid #e5e7eb;
+            overflow-x: auto;
+            flex-wrap: wrap;
+        }
+        
+        .tab-button {
+            background: none;
+            border: none;
+            color: #6b7280;
+            padding: 12px 16px;
+            cursor: pointer;
+            font-size: clamp(0.85rem, 2vw, 0.95rem);
+            font-weight: 500;
+            border-bottom: 2px solid transparent;
+            transition: all 0.2s ease;
+            white-space: nowrap;
+            flex-shrink: 0;
+        }
+        
+        @media (max-width: 768px) {
+            .tabs {
+                justify-content: center;
+                flex-wrap: wrap;
+                gap: 5px;
+            }
+            
+            .tab-button {
+                padding: 10px 14px;
+                font-size: 0.9rem;
+            }
+        }
+        
+        .tab-button.active {
+            color: #1f5f99;
+            border-bottom-color: #1f5f99;
+        }
+        
+        .tab-button:hover {
+            color: #1f5f99;
+            background: #f3f4f6;
+        }
+        
+        .tab-content {
+            display: none;
+            animation: fadeIn 0.5s ease-in;
+        }
+        
+        .tab-content.active {
+            display: block;
+        }
+        
+        /* Home Content */
+        .home-content {
+            text-align: center;
+            max-width: 100%;
+            margin: 0 auto;
+            padding: 0 10px;
+        }
+        
+        .home-content h2 {
+            color: #1f2937;
+            margin-bottom: 16px;
+            font-size: clamp(1.5rem, 4vw, 1.8rem);
+            font-weight: 600;
+        }
+        
+        .home-content > p {
+            font-size: clamp(1rem, 2vw, 1.1rem);
+            margin-bottom: 32px;
+            color: #6b7280;
+        }
+        
+        /* Utility Grid */
+        .utility-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 20px;
+            margin-bottom: 40px;
+            max-width: 100%;
+        }
+        
+        @media (max-width: 768px) {
+            .utility-grid {
+                grid-template-columns: 1fr;
+                gap: 15px;
+                margin-bottom: 30px;
+            }
+        }
+        
+        .utility-card {
+            background: #ffffff;
+            border-radius: 8px;
+            padding: 24px 20px;
+            border: 1px solid #e5e7eb;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            text-align: center;
+            position: relative;
+            height: auto;
+            min-height: 240px;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+        }
+        
+        .utility-card:hover {
+            transform: translateY(-2px);
+            border-color: #1f5f99;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1), 0 2px 4px rgba(0, 0, 0, 0.06);
+        }
+        
+        .utility-icon {
+            font-size: clamp(2rem, 4vw, 2.5rem);
+            margin-bottom: 10px;
+            line-height: 1;
+        }
+        
+        .utility-card h3 {
+            color: #1f2937;
+            margin-bottom: 12px;
+            font-size: clamp(1.2rem, 3vw, 1.3rem);
+            font-weight: 600;
+        }
+        
+        .utility-card p {
+            margin-bottom: 16px;
+            color: #6b7280;
+            line-height: 1.4;
+            font-size: clamp(0.9rem, 2vw, 0.95rem);
+        }
+        
+        .utility-features {
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+            margin-bottom: 20px;
+        }
+        
+        .utility-features span {
+            font-size: clamp(0.8rem, 1.5vw, 0.85rem);
+            color: #4b5563;
+            background: #f3f4f6;
+            padding: 4px 12px;
+            border-radius: 16px;
+            border: 1px solid #e5e7eb;
+        }
+        
+        .utility-button {
+            background: #1f5f99;
+            border: none;
+            color: white;
+            padding: 10px 20px;
+            font-size: 0.9rem;
+            font-weight: 500;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            width: 100%;
+        }
+        
+        .utility-button:hover {
+            background: #1e4a73;
+            transform: none;
+            box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
+        }
+        
+        /* Test Section */
+        .test-section {
+            background: #ffffff;
+            border-radius: 8px;
+            padding: 24px;
+            border: 1px solid #e5e7eb;
+            text-align: center;
+            max-width: 100%;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+        }
+        
+        .test-section h3 {
+            color: #1f2937;
+            margin-bottom: 12px;
+            font-size: clamp(1.1rem, 2.5vw, 1.2rem);
+            font-weight: 600;
+        }
+        
+        .test-section p {
+            margin-bottom: 16px;
+            color: #6b7280;
+            font-size: clamp(0.9rem, 2vw, 0.95rem);
+        }
+        
+        /* Form Styles */
+        .form-header {
+            text-align: center;
+            margin-bottom: 32px;
+            padding-bottom: 20px;
+            border-bottom: 1px solid #e5e7eb;
+        }
+        
+        .form-header h2 {
+            color: #1f2937;
+            margin-bottom: 8px;
+            font-size: 1.6rem;
+            font-weight: 600;
+        }
+        
+        .form-header p {
+            color: #6b7280;
+            margin-bottom: 20px;
+        }
+        
+        .back-button {
+            margin-top: 10px;
+        }
+        
+        .form-section {
+            background: #ffffff;
+            border-radius: 8px;
+            padding: 24px;
+            margin-bottom: 24px;
+            border: 1px solid #e5e7eb;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+        }
+        
+        .form-section h3 {
+            color: #1f2937;
+            margin-bottom: 20px;
+            font-size: 1.2rem;
+            font-weight: 600;
+        }
+        
+        .form-row {
+            margin-bottom: 15px;
+        }
+        
+        .form-row input, .form-row select, .form-row textarea {
+            width: 100%;
+            padding: 12px 16px;
+            border: 1px solid #d1d5db;
+            border-radius: 6px;
+            background: #ffffff;
+            color: #1f2937;
+            font-size: 1rem;
+            transition: all 0.2s ease;
+            font-family: inherit;
+        }
+        
+        .form-row textarea {
+            resize: vertical;
+            min-height: 100px;
+        }
+        
+        .form-row input:focus, .form-row select:focus, .form-row textarea:focus {
+            outline: none;
+            border-color: #1f5f99;
+            box-shadow: 0 0 0 3px rgba(31, 95, 153, 0.1);
+        }
+        
+        .form-row input::placeholder, .form-row textarea::placeholder {
+            color: #9ca3af;
+        }
+        
+        .form-row select option {
+            background: #ffffff;
+            color: #1f2937;
+        }
+        
+        /* Checkbox Styles */
+        .checkbox-label {
+            display: flex;
+            align-items: center;
+            cursor: pointer;
+            margin-bottom: 10px;
+        }
+        
+        .checkbox-label input[type="checkbox"] {
+            width: auto;
+            margin-right: 12px;
+            transform: scale(1.2);
+            accent-color: #1f5f99;
+        }
+        
+        .checkbox-text {
+            color: #1f2937;
+            font-size: 1rem;
+        }
+        
+        .form-row small {
+            color: #6b7280;
+            font-size: 0.85rem;
+            margin-top: 5px;
+            display: block;
+        }
+        
+        .auth-fields {
+            margin-top: 15px;
+            padding-left: 20px;
+            border-left: 3px solid rgba(31, 95, 153, 0.3);
+        }
+        
+        .form-actions {
+            display: flex;
+            gap: 15px;
+            justify-content: center;
+            margin-top: 30px;
+        }
+        
+        .button.secondary {
+            background: #ffffff;
+            border: 1px solid #d1d5db;
+            color: #374151;
+        }
+        
+        .button.secondary:hover {
+            background: #f9fafb;
+            border-color: #9ca3af;
+        }
+        
+        /* Results Styles */
+        .results-section {
+            background: rgba(40, 167, 69, 0.1);
+            border: 2px solid rgba(40, 167, 69, 0.3);
+            border-radius: 15px;
+            padding: 25px;
+            margin-top: 25px;
+        }
+        
+        .progress-container {
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 10px;
+            padding: 15px;
+            margin-bottom: 20px;
+            font-family: 'Courier New', monospace;
+        }
+        
+        .copy-results {
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 10px;
+            padding: 15px;
+            margin-bottom: 20px;
+            max-height: 400px;
+            overflow-y: auto;
+            font-family: 'Courier New', monospace;
+        }
+        
+        .result-item {
+            margin-bottom: 10px;
+            padding: 8px;
+            border-left: 3px solid #4ECDC4;
+            background: rgba(255, 255, 255, 0.05);
+        }
+        
+        .result-item.success {
+            border-left-color: #28a745;
+        }
+        
+        .result-item.error {
+            border-left-color: #dc3545;
+        }
+        
+        /* Loading Animation */
+        .loading {
+            display: inline-block;
+            width: 20px;
+            height: 20px;
+            border: 3px solid rgba(255, 255, 255, 0.3);
+            border-radius: 50%;
+            border-top-color: #FFE55D;
+            animation: spin 1s ease-in-out infinite;
+        }
+        
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1 class="title">Tableau Pulse Utilities <span class="wave">⚡</span></h1>
+        <p class="subtitle">Powerful web tools for managing Tableau Pulse - no command line needed!</p>
+        
+        <!-- Navigation Tabs -->
+        <div class="tabs">
+            <button class="tab-button active" onclick="showTab('home')">🏠 Home</button>
+            <button class="tab-button" onclick="showTab('copy-definitions')">📊 Copy Definitions</button>
+            <button class="tab-button" onclick="showTab('manage-followers')">👥 Manage Followers</button>
+            <button class="tab-button" onclick="showTab('swap-datasources')">🔄 Swap Datasources</button>
+            <button class="tab-button" onclick="showTab('update-preferences')">⚙️ Update Preferences</button>
+            <button class="tab-button" onclick="showTab('check-certified')">✅ Check Certified</button>
+            <button class="tab-button" onclick="showTab('bulk-scoped')">📊 Bulk Scoped Metrics</button>
+            <button class="tab-button" onclick="showTab('analytics')">📈 Analytics</button>
+            <button class="tab-button" onclick="showTab('tcm-logs')">📋 TCM Logs</button>
+            <button class="tab-button" onclick="showTab('zero-followers')">🔍 Zero Followers</button>
+            <button class="tab-button" onclick="showTab('export-definitions')">📑 Export Definitions</button>
+        </div>
+
+        <!-- Home Tab - Utility Selector -->
+        <div id="home" class="tab-content active">
+            <div class="home-content">
+                <h2>Welcome to Tableau Pulse Utilities</h2>
+                <p>Choose the utility you want to use:</p>
+                
+                <div class="utility-grid">
+                    <div class="utility-card" onclick="showTab('copy-definitions')">
+                        <div class="utility-icon">📊</div>
+                        <h3>Copy Definitions</h3>
+                        <p>Copy Tableau Pulse definitions between different sites</p>
+                        <div class="utility-features">
+                            <span>✅ Copy individual or all definitions</span>
+                            <span>🔐 Multiple authentication methods</span>
+                            <span>🌐 Cross-site copying</span>
+                        </div>
+                        <button class="utility-button">Get Started</button>
+                    </div>
+
+                    <div class="utility-card" onclick="showTab('manage-followers')">
+                        <div class="utility-icon">👥</div>
+                        <h3>Manage Followers</h3>
+                        <p>Bulk add or remove followers from Pulse metrics using email addresses</p>
+                        <div class="utility-features">
+                            <span>➕ Add followers in bulk</span>
+                            <span>➖ Remove followers in bulk</span>
+                            <span>📧 Use email addresses</span>
+                        </div>
+                        <button class="utility-button">Get Started</button>
+                    </div>
+
+                    <div class="utility-card" onclick="showTab('swap-datasources')">
+                        <div class="utility-icon">🔄</div>
+                        <h3>Swap Datasources</h3>
+                        <p>Copy definitions with new datasources and migrate metrics + followers</p>
+                        <div class="utility-features">
+                            <span>🔄 Copy with new datasource</span>
+                            <span>📈 Migrate all metrics</span>
+                            <span>👥 Transfer followers</span>
+                        </div>
+                        <button class="utility-button">Get Started</button>
+                    </div>
+
+                    <div class="utility-card" onclick="showTab('update-preferences')">
+                        <div class="utility-icon">⚙️</div>
+                        <h3>Update User Preferences</h3>
+                        <p>Update Tableau Pulse user preferences including cadence and channels</p>
+                        <div class="utility-features">
+                            <span>📅 Set cadence preferences</span>
+                            <span>📧 Configure email/Slack channels</span>
+                            <span>📊 Set metric grouping options</span>
+                        </div>
+                        <button class="utility-button">Get Started</button>
+                    </div>
+
+                    <div class="utility-card" onclick="showTab('check-certified')">
+                        <div class="utility-icon">✅</div>
+                        <h3>Check Certified Metrics</h3>
+                        <p>View all certified metrics and optionally remove certifications from unauthorized users</p>
+                        <div class="utility-features">
+                            <span>✅ View all certified metrics</span>
+                            <span>👥 Check certifier group membership</span>
+                            <span>🗑️ Remove unauthorized certifications</span>
+                        </div>
+                        <button class="utility-button">Get Started</button>
+                    </div>
+
+                    <div class="utility-card" onclick="showTab('bulk-scoped')">
+                        <div class="utility-icon">📊</div>
+                        <h3>Bulk Create Scoped Metrics</h3>
+                        <p>Create multiple scoped metrics with CSV upload: apply dimension filters and auto-assign followers</p>
+                        <div class="utility-features">
+                            <span>📄 CSV upload support</span>
+                            <span>🔍 Multiple filter values per metric</span>
+                            <span>👥 Auto-assign followers by email</span>
+                        </div>
+                        <button class="utility-button">Get Started</button>
+                    </div>
+
+                    <div class="utility-card" onclick="showTab('analytics')">
+                        <div class="utility-icon">📈</div>
+                        <h3>Pulse Analytics</h3>
+                        <p>Get comprehensive insights into metric usage, followers, and datasource adoption across your site</p>
+                        <div class="utility-features">
+                            <span>📊 Metric & definition statistics</span>
+                            <span>👥 Follower analytics</span>
+                            <span>🗄️ Datasource usage insights</span>
+                        </div>
+                        <button class="utility-button">Get Started</button>
+                    </div>
+
+                    <div class="utility-card" onclick="showTab('tcm-logs')">
+                        <div class="utility-icon">📋</div>
+                        <h3>TCM Activity Logs</h3>
+                        <p>Download and view activity logs from Tableau Cloud Manager for your site</p>
+                        <div class="utility-features">
+                            <span>📥 Download activity logs</span>
+                            <span>📅 Last 14 days by default</span>
+                            <span>🔍 Combined log view</span>
+                        </div>
+                        <button class="utility-button">Get Started</button>
+                    </div>
+
+                    <div class="utility-card" onclick="showTab('zero-followers')">
+                        <div class="utility-icon">🔍</div>
+                        <h3>Zero Follower Metrics</h3>
+                        <p>Find metrics within a definition that have no followers</p>
+                        <div class="utility-features">
+                            <span>📊 Analyze by definition ID</span>
+                            <span>🚫 Identify unused metrics</span>
+                            <span>📋 Get metric details</span>
+                        </div>
+                        <button class="utility-button">Get Started</button>
+                    </div>
+
+                    <div class="utility-card" onclick="showTab('export-definitions')">
+                        <div class="utility-icon">📑</div>
+                        <h3>Export Definitions</h3>
+                        <p>Export all Pulse metric definitions to CSV for documentation or analysis</p>
+                        <div class="utility-features">
+                            <span>📊 Basic or verbose export</span>
+                            <span>📋 One row per definition</span>
+                            <span>📥 Download as CSV</span>
+                        </div>
+                        <button class="utility-button">Get Started</button>
+                    </div>
+                </div>
+
+                <div class="test-section">
+                    <h3>System Test</h3>
+                    <p>Test the API connection to ensure everything is working:</p>
+                    <button class="button secondary" onclick="callAPI()">🧪 Test API Connection</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Copy Definitions Tab -->
+        <div id="copy-definitions" class="tab-content">
+            <div class="form-header">
+                <h2>📊 Copy Pulse Definitions</h2>
+                <p>Copy Tableau Pulse definitions between different sites</p>
+                <button type="button" class="button secondary back-button" onclick="showTab('home')">← Back to Home</button>
+            </div>
+            
+            <form id="copyDefinitionsForm" onsubmit="submitCopyDefinitions(event)">
+                <!-- Source Site Section -->
+                <div class="form-section">
+                    <h3>📥 Source Site (Where to copy FROM)</h3>
+                    <div class="form-row">
+                        <input type="text" id="source_host" name="source_host" placeholder="Source Host (e.g., https://stage-dataplane1.tableau.sfdc.net)" required>
+                    </div>
+                    <div class="form-row">
+                        <input type="text" id="source_content_url" name="source_content_url" placeholder="Source Content URL" required>
+                    </div>
+                    <div class="form-row">
+                        <select id="source_auth_method" name="source_auth_method" onchange="toggleAuthFields('source')" required>
+                            <option value="">Select Authentication Method</option>
+                            <option value="u">Username/Password</option>
+                            <option value="p">Personal Access Token</option>
+                        </select>
+                    </div>
+                    <div id="source_user_auth" class="auth-fields" style="display: none;">
+                        <div class="form-row">
+                            <input type="text" id="source_username" name="source_username" placeholder="Username">
+                        </div>
+                        <div class="form-row">
+                            <input type="password" id="source_password" name="source_password" placeholder="Password">
+                        </div>
+                    </div>
+                    <div id="source_pat_auth" class="auth-fields" style="display: none;">
+                        <div class="form-row">
+                            <input type="text" id="source_pat_name" name="source_pat_name" placeholder="PAT Name">
+                        </div>
+                        <div class="form-row">
+                            <input type="password" id="source_pat_secret" name="source_pat_secret" placeholder="PAT Secret">
+                        </div>
+                    </div>
+                    <div class="form-row">
+                        <input type="text" id="source_datasource" name="source_datasource" placeholder="Source Datasource Name" required>
+                    </div>
+                </div>
+
+                <!-- Destination Site Section -->
+                <div class="form-section">
+                    <h3>📤 Destination Site (Where to copy TO)</h3>
+                    <div class="form-row">
+                        <input type="text" id="dest_host" name="dest_host" placeholder="Destination Host" required>
+                    </div>
+                    <div class="form-row">
+                        <input type="text" id="dest_content_url" name="dest_content_url" placeholder="Destination Content URL" required>
+                    </div>
+                    <div class="form-row">
+                        <select id="dest_auth_method" name="dest_auth_method" onchange="toggleAuthFields('dest')" required>
+                            <option value="">Select Authentication Method</option>
+                            <option value="u">Username/Password</option>
+                            <option value="p">Personal Access Token</option>
+                        </select>
+                    </div>
+                    <div id="dest_user_auth" class="auth-fields" style="display: none;">
+                        <div class="form-row">
+                            <input type="text" id="dest_username" name="dest_username" placeholder="Username">
+                        </div>
+                        <div class="form-row">
+                            <input type="password" id="dest_password" name="dest_password" placeholder="Password">
+                        </div>
+                    </div>
+                    <div id="dest_pat_auth" class="auth-fields" style="display: none;">
+                        <div class="form-row">
+                            <input type="text" id="dest_pat_name" name="dest_pat_name" placeholder="PAT Name">
+                        </div>
+                        <div class="form-row">
+                            <input type="password" id="dest_pat_secret" name="dest_pat_secret" placeholder="PAT Secret">
+                        </div>
+                    </div>
+                    <div class="form-row">
+                        <input type="text" id="dest_datasource" name="dest_datasource" placeholder="Destination Datasource Name" required>
+                    </div>
+                </div>
+
+                <!-- Definition Selection -->
+                <div class="form-section">
+                    <h3>📋 Definition Selection</h3>
+                    <div class="form-row">
+                        <input type="text" id="definition_ids" name="definition_ids" placeholder='Definition IDs (comma-separated) or "all" for all definitions'>
+                        <small>Enter specific definition IDs separated by commas, or type "all" to copy all definitions from the source datasource</small>
+                    </div>
+                </div>
+
+                <div class="form-actions">
+                    <button type="submit" class="button">🚀 Start Copying</button>
+                    <button type="button" class="button secondary" onclick="showTab('home')">← Back to Home</button>
+                </div>
+            </form>
+        </div>
+
+        <!-- Manage Followers Tab -->
+        <div id="manage-followers" class="tab-content">
+            <div class="form-header">
+                <h2>👥 Manage Pulse Followers</h2>
+                <p>Bulk add or remove followers from Pulse metrics using email addresses</p>
+                <button type="button" class="button secondary back-button" onclick="showTab('home')">← Back to Home</button>
+            </div>
+            
+            <form id="manageFollowersForm" onsubmit="submitManageFollowers(event)" enctype="multipart/form-data">
+                <!-- Site Connection Section -->
+                <div class="form-section">
+                    <h3>🔗 Site Connection</h3>
+                    <div class="form-row">
+                        <input type="text" id="manage_host" name="server_host" placeholder="Tableau Server URL (e.g., https://your-server.com)" required>
+                    </div>
+                    <div class="form-row">
+                        <input type="text" id="manage_site" name="site_content_url" placeholder="Site Content URL" required>
+                    </div>
+                    <div class="form-row">
+                        <select id="manage_auth_method" name="auth_method" onchange="toggleAuthFields('manage')" required>
+                            <option value="">Select Authentication Method</option>
+                            <option value="password">Username/Password</option>
+                            <option value="pat">Personal Access Token</option>
+                        </select>
+                    </div>
+                    <div id="manage_user_auth" class="auth-fields" style="display: none;">
+                        <div class="form-row">
+                            <input type="text" id="manage_username" name="username" placeholder="Username">
+                        </div>
+                        <div class="form-row">
+                            <input type="password" id="manage_password" name="password" placeholder="Password">
+                        </div>
+                    </div>
+                    <div id="manage_pat_auth" class="auth-fields" style="display: none;">
+                        <div class="form-row">
+                            <input type="text" id="manage_pat_name" name="pat_name" placeholder="PAT Name">
+                        </div>
+                        <div class="form-row">
+                            <input type="password" id="manage_pat_token" name="pat_token" placeholder="PAT Token">
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Action Configuration -->
+                <div class="form-section">
+                    <h3>⚙️ Action Configuration</h3>
+                    <div class="form-row">
+                        <select id="manage_action" name="action" required>
+                            <option value="">Select Action</option>
+                            <option value="add">➕ Add Followers</option>
+                            <option value="remove">➖ Remove Followers</option>
+                        </select>
+                    </div>
+                    <div class="form-row">
+                        <input type="text" id="manage_metrics" name="metric_ids" placeholder="Metric IDs (comma-separated)" required>
+                        <small>Enter the IDs of the metrics you want to modify, separated by commas</small>
+                    </div>
+                    
+                    <!-- Input Mode Selection -->
+                    <div class="form-row">
+                        <label for="manage_input_mode">Input Mode:</label>
+                        <select id="manage_input_mode" name="input_mode" onchange="toggleManageInputMode()" required>
+                            <option value="manual">✏️ Manual Entry</option>
+                            <option value="csv">📄 CSV Upload</option>
+                        </select>
+                    </div>
+                    
+                    <!-- Manual Entry Mode -->
+                    <div id="manage_manual_input_section">
+                        <div class="form-row">
+                            <textarea id="manage_users" name="user_emails" placeholder="User Email Addresses (comma-separated or one per line)" rows="4" required></textarea>
+                            <small>Enter email addresses of users to add/remove as followers</small>
+                        </div>
+                    </div>
+                    
+                    <!-- CSV Upload Mode -->
+                    <div id="manage_csv_input_section" class="form-section" style="display: none;">
+                        <h3>📄 CSV File Upload</h3>
+                        <div class="form-row">
+                            <input type="file" id="manage_csv_file" name="csv_file" accept=".csv" onchange="previewManageCSV(event)">
+                            <small>💡 <strong>CSV Format (single column):</strong><br>
+                            The CSV should contain a single column with email addresses, one per row.<br>
+                            The first row can be a header (e.g., "Email" or "User Email") and will be automatically skipped.<br><br>
+                            <strong>Example CSV:</strong><br>
+                            <code style="display:block; background: rgba(0,0,0,0.2); padding: 10px; margin-top: 5px; border-radius: 5px;">
+                            Email<br>
+                            user1@example.com<br>
+                            user2@example.com<br>
+                            user3@example.com
+                            </code>
+                            </small>
+                        </div>
+                        <div id="manage_csv_preview" style="display: none; margin-top: 10px; padding: 10px; background: rgba(0,0,0,0.2); border-radius: 5px;">
+                            <strong>CSV Preview:</strong>
+                            <pre id="manage_csv_preview_content" style="margin-top: 5px; max-height: 200px; overflow-y: auto;"></pre>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="form-actions">
+                    <button type="submit" class="button">👥 Manage Followers</button>
+                    <button type="button" class="button secondary" onclick="showTab('home')">← Back to Home</button>
+                </div>
+            </form>
+        </div>
+
+        <!-- Swap Datasources Tab -->
+        <div id="swap-datasources" class="tab-content">
+            <div class="form-header">
+                <h2>🔄 Swap Datasources</h2>
+                <p>Copy definitions with new datasources and migrate all metrics + followers</p>
+                <button type="button" class="button secondary back-button" onclick="showTab('home')">← Back to Home</button>
+            </div>
+            
+            <form id="swapDatasourcesForm" onsubmit="submitSwapDatasources(event)">
+                <!-- Site Connection Section -->
+                <div class="form-section">
+                    <h3>🔗 Site Connection</h3>
+                    <div class="form-row">
+                        <input type="text" id="swap_host" name="server_host" placeholder="Tableau Server URL (e.g., https://your-server.com)" required>
+                    </div>
+                    <div class="form-row">
+                        <input type="text" id="swap_site" name="site_content_url" placeholder="Site Content URL (blank for Default)" required>
+                    </div>
+                    <div class="form-row">
+                        <select id="swap_auth_method" name="auth_method" onchange="toggleAuthFields('swap')" required>
+                            <option value="">Select Authentication Method</option>
+                            <option value="password">Username/Password</option>
+                            <option value="pat">Personal Access Token</option>
+                        </select>
+                    </div>
+                    <div id="swap_user_auth" class="auth-fields" style="display: none;">
+                        <div class="form-row">
+                            <input type="text" id="swap_username" name="username" placeholder="Username">
+                        </div>
+                        <div class="form-row">
+                            <input type="password" id="swap_password" name="password" placeholder="Password">
+                        </div>
+                    </div>
+                    <div id="swap_pat_auth" class="auth-fields" style="display: none;">
+                        <div class="form-row">
+                            <input type="text" id="swap_pat_name" name="pat_name" placeholder="PAT Name">
+                        </div>
+                        <div class="form-row">
+                            <input type="password" id="swap_pat_secret" name="pat_secret" placeholder="PAT Secret">
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Copy Configuration -->
+                <div class="form-section">
+                    <h3>📋 Copy Configuration</h3>
+                    <div class="form-row">
+                        <input type="text" id="swap_definition_id" name="definition_id" placeholder="Pulse Definition ID to Copy" required>
+                        <small>Enter the ID of the Pulse definition you want to copy with a new datasource</small>
+                    </div>
+                    <div class="form-row">
+                        <input type="text" id="swap_datasource_id" name="new_datasource_id" placeholder="New Datasource LUID" required>
+                        <small>Enter the LUID of the new datasource to use for the copied definition</small>
+                    </div>
+                </div>
+
+                <!-- Cleanup Options -->
+                <div class="form-section">
+                    <h3>🧹 Cleanup Options</h3>
+                    <div class="form-row">
+                        <label class="checkbox-label">
+                            <input type="checkbox" id="swap_remove_old_followers" name="remove_old_followers" value="true">
+                            <span class="checkbox-text">Remove followers from old metrics after copying</span>
+                        </label>
+                        <small>Check this if you want to remove followers from the original metrics after successfully copying them to the new definition</small>
+                    </div>
+                </div>
+
+                <div class="form-actions">
+                    <button type="submit" class="button">🔄 Swap Datasources</button>
+                    <button type="button" class="button secondary" onclick="showTab('home')">← Back to Home</button>
+                </div>
+            </form>
+        </div>
+
+        <!-- Update User Preferences Tab -->
+        <div id="update-preferences" class="tab-content">
+            <div class="form-header">
+                <h2>⚙️ Update User Preferences</h2>
+                <p>Update Tableau Pulse user preferences for single or multiple users. Configure cadence settings, channel preferences, and metric grouping options.</p>
+                <button type="button" class="button secondary back-button" onclick="showTab('home')">← Back to Home</button>
+            </div>
+            
+            <form id="updatePreferencesForm" onsubmit="submitUpdatePreferences(event)">
+                <!-- Server Connection Section -->
+                <div class="form-section">
+                    <h3>🔗 Server Connection</h3>
+                    <div class="form-row">
+                        <input type="url" id="prefs_server_url" name="server_url" placeholder="Tableau Server URL (e.g., https://your-server.com)" required>
+                    </div>
+                    <div class="form-row">
+                        <input type="text" id="prefs_api_version" name="api_version" value="3.26" placeholder="API Version (e.g., 3.26)" pattern="^\d+\.\d+$">
+                    </div>
+                    <div class="form-row">
+                        <input type="text" id="prefs_site_content_url" name="site_content_url" placeholder="Site Content URL (blank for Default)">
+                    </div>
+                    <div class="form-row">
+                        <select id="prefs_auth_method" name="auth_method" onchange="toggleAuthFields('prefs')" required>
+                            <option value="">Select Authentication Method</option>
+                            <option value="password">Username/Password</option>
+                            <option value="pat">Personal Access Token</option>
+                        </select>
+                    </div>
+                    <div id="prefs_user_auth" class="auth-fields" style="display: none;">
+                        <div class="form-row">
+                            <input type="text" id="prefs_username" name="username" placeholder="Username">
+                        </div>
+                        <div class="form-row">
+                            <input type="password" id="prefs_password" name="password" placeholder="Password">
+                        </div>
+                    </div>
+                    <div id="prefs_pat_auth" class="auth-fields" style="display: none;">
+                        <div class="form-row">
+                            <input type="text" id="prefs_pat_name" name="pat_name" placeholder="PAT Name">
+                        </div>
+                        <div class="form-row">
+                            <input type="password" id="prefs_pat_token" name="pat_token" placeholder="PAT Value">
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Users Configuration -->
+                <div class="form-section">
+                    <h3>👤 Users Configuration</h3>
+                    <div class="form-row">
+                        <textarea id="user_emails" name="user_emails" placeholder="User Email Addresses (comma-separated or one per line)" rows="3" required></textarea>
+                        <small>💡 For single user: one email. For bulk update: comma-separated emails</small>
+                    </div>
+                </div>
+
+                <!-- Preferences Configuration -->
+                <div class="form-section">
+                    <h3>⚙️ Pulse Preferences</h3>
+                    <div class="form-row">
+                        <select id="cadence" name="cadence">
+                            <option value="">-- No Change to Cadence --</option>
+                            <option value="CADENCE_DAILY">📅 Daily</option>
+                            <option value="CADENCE_WEEKLY">📅 Weekly</option>
+                            <option value="CADENCE_MONTHLY">📅 Monthly</option>
+                        </select>
+                        <small>Set how often users receive Pulse notifications</small>
+                    </div>
+                    <div class="form-row">
+                        <select id="email_channel" name="email_channel">
+                            <option value="">-- No Change to Email --</option>
+                            <option value="CHANNEL_STATUS_ENABLED">📧 Enable Email Channel</option>
+                            <option value="CHANNEL_STATUS_DISABLED">📧 Disable Email Channel</option>
+                        </select>
+                        <small>Configure email notification delivery</small>
+                    </div>
+                    <div class="form-row">
+                        <select id="slack_channel" name="slack_channel">
+                            <option value="">-- No Change to Slack --</option>
+                            <option value="CHANNEL_STATUS_ENABLED">💬 Enable Slack Channel</option>
+                            <option value="CHANNEL_STATUS_DISABLED">💬 Disable Slack Channel</option>
+                        </select>
+                        <small>Configure Slack notification delivery</small>
+                    </div>
+                </div>
+
+                <!-- Metric Grouping Preferences -->
+                <div class="form-section">
+                    <h3>📊 Metric Grouping Preferences</h3>
+                    <div class="form-row">
+                        <select id="group_by" name="group_by">
+                            <option value="">-- No Change to Grouping --</option>
+                            <option value="GROUP_BY_DEFINITION_NAME">📝 Group by Definition Name</option>
+                            <option value="GROUP_BY_TIME_RANGE">📅 Group by Time Range</option>
+                            <option value="GROUP_BY_RECENTLY_FOLLOWED">⭐ Group by Recently Followed</option>
+                            <option value="GROUP_BY_DATASOURCE_LABEL">🗂️ Group by Datasource Label</option>
+                        </select>
+                        <small>Choose how metrics are grouped in the Pulse interface</small>
+                    </div>
+                    <div class="form-row">
+                        <select id="sort_order" name="sort_order">
+                            <option value="">-- No Change to Sort Order --</option>
+                            <option value="SORT_ORDER_ASCENDING">📈 Ascending Order</option>
+                            <option value="SORT_ORDER_DESCENDING">📉 Descending Order</option>
+                        </select>
+                        <small>Choose how grouped metrics are sorted</small>
+                    </div>
+                </div>
+
+                <div class="form-actions">
+                    <button type="submit" class="button">⚙️ Update User Preferences</button>
+                    <button type="button" class="button secondary" onclick="showTab('home')">← Back to Home</button>
+                </div>
+            </form>
+        </div>
+
+        <!-- Check Certified Metrics Tab -->
+        <div id="check-certified" class="tab-content">
+            <div class="form-header">
+                <h2>✅ Check Certified Metrics</h2>
+                <p>View all certified metrics and optionally remove certifications from users not in a specified group</p>
+                <button type="button" class="button secondary back-button" onclick="showTab('home')">← Back to Home</button>
+            </div>
+            
+            <form id="checkCertifiedForm" onsubmit="submitCheckCertified(event)">
+                <!-- Server Connection Section -->
+                <div class="form-section">
+                    <h3>🔗 Server Connection</h3>
+                    <div class="form-row">
+                        <input type="url" id="cert_server_url" name="server_url" placeholder="Tableau Server URL (e.g., https://your-server.com)" required>
+                    </div>
+                    <div class="form-row">
+                        <input type="text" id="cert_api_version" name="api_version" value="3.26" placeholder="API Version (e.g., 3.26)" pattern="^\d+\.\d+$">
+                    </div>
+                    <div class="form-row">
+                        <input type="text" id="cert_site_content_url" name="site_content_url" placeholder="Site Content URL (blank for Default)">
+                    </div>
+                    <div class="form-row">
+                        <select id="cert_auth_method" name="auth_method" onchange="toggleAuthFields('cert')" required>
+                            <option value="">Select Authentication Method</option>
+                            <option value="password">Username/Password</option>
+                            <option value="pat">Personal Access Token</option>
+                        </select>
+                    </div>
+                    <div id="cert_user_auth" class="auth-fields" style="display: none;">
+                        <div class="form-row">
+                            <input type="text" id="cert_username" name="username" placeholder="Username">
+                        </div>
+                        <div class="form-row">
+                            <input type="password" id="cert_password" name="password" placeholder="Password">
+                        </div>
+                    </div>
+                    <div id="cert_pat_auth" class="auth-fields" style="display: none;">
+                        <div class="form-row">
+                            <input type="text" id="cert_pat_name" name="pat_name" placeholder="PAT Name">
+                        </div>
+                        <div class="form-row">
+                            <input type="password" id="cert_pat_token" name="pat_token" placeholder="PAT Value">
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Group Configuration Section -->
+                <div class="form-section">
+                    <h3>👥 Group Configuration (Optional)</h3>
+                    <div class="form-row">
+                        <input type="text" id="cert_group_name" name="group_name" placeholder="Group Name (Optional - Leave empty to skip group filtering)">
+                        <small>💡 If you provide a Group Name, the tool will automatically look up the group and check which certified metrics were certified by users in this group vs. users not in the group</small>
+                    </div>
+                </div>
+
+                <!-- Action Configuration Section -->
+                <div class="form-section">
+                    <h3>🗑️ Certification Removal (Optional)</h3>
+                    <div class="form-row">
+                        <label class="checkbox-label">
+                            <input type="checkbox" id="cert_remove_non_group" name="remove_non_group_certs" value="true">
+                            <span class="checkbox-text">Remove certifications from metrics certified by non-group members</span>
+                        </label>
+                        <small>⚠️ Check this box to automatically remove certifications from metrics that were certified by users NOT in the specified group. Requires a Group Name to be specified above.</small>
+                    </div>
+                </div>
+
+                <div class="form-actions">
+                    <button type="submit" class="button">✅ Check Certified Metrics</button>
+                    <button type="button" class="button secondary" onclick="showTab('home')">← Back to Home</button>
+                </div>
+            </form>
+        </div>
+
+        <!-- Bulk Create Scoped Metrics Tab -->
+        <div id="bulk-scoped" class="tab-content">
+            <div class="form-header">
+                <h2>📊 Bulk Create Scoped Metrics</h2>
+                <p>Create multiple scoped metrics from a source metric by applying dimension filters. Upload a CSV for advanced features!</p>
+                <button type="button" class="button secondary back-button" onclick="showTab('home')">← Back to Home</button>
+            </div>
+            
+            <form id="bulkScopedForm" onsubmit="submitBulkScoped(event)">
+                <!-- Server Connection Section -->
+                <div class="form-section">
+                    <h3>🔗 Server Connection</h3>
+                    <div class="form-row">
+                        <input type="url" id="scoped_server_url" name="server_url" placeholder="Tableau Server URL (e.g., https://your-server.com)" required>
+                    </div>
+                    <div class="form-row">
+                        <input type="text" id="scoped_api_version" name="api_version" value="3.26" placeholder="API Version (e.g., 3.26)" pattern="^\d+\.\d+$">
+                    </div>
+                    <div class="form-row">
+                        <input type="text" id="scoped_site_content_url" name="site_content_url" placeholder="Site Content URL (blank for Default)">
+                    </div>
+                    <div class="form-row">
+                        <select id="scoped_auth_method" name="auth_method" onchange="toggleAuthFields('scoped')" required>
+                            <option value="">Select Authentication Method</option>
+                            <option value="password">Username/Password</option>
+                            <option value="pat">Personal Access Token</option>
+                        </select>
+                    </div>
+                    <div id="scoped_user_auth" class="auth-fields" style="display: none;">
+                        <div class="form-row">
+                            <input type="text" id="scoped_username" name="username" placeholder="Username">
+                        </div>
+                        <div class="form-row">
+                            <input type="password" id="scoped_password" name="password" placeholder="Password">
+                        </div>
+                    </div>
+                    <div id="scoped_pat_auth" class="auth-fields" style="display: none;">
+                        <div class="form-row">
+                            <input type="text" id="scoped_pat_name" name="pat_name" placeholder="PAT Name">
+                        </div>
+                        <div class="form-row">
+                            <input type="password" id="scoped_pat_token" name="pat_token" placeholder="PAT Value">
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Source Metric Configuration -->
+                <div class="form-section">
+                    <h3>📊 Source Metric Configuration</h3>
+                    <div class="form-row">
+                        <input type="text" id="scoped_source_metric_id" name="source_metric_id" placeholder="Source Metric ID" required>
+                        <small>💡 The ID of the scoped metric you want to use as a template</small>
+                    </div>
+                </div>
+
+                <!-- Input Mode Selection -->
+                <div class="form-section">
+                    <h3>📝 Input Mode</h3>
+                    <div class="form-row">
+                        <select id="scoped_input_mode" name="input_mode" onchange="toggleInputMode()" required>
+                            <option value="csv">📄 CSV Upload (Recommended - supports multiple filters + followers)</option>
+                            <option value="manual">✏️ Manual Entry (Simple - single filter per metric)</option>
+                        </select>
+                    </div>
+                </div>
+
+                <!-- CSV Upload Mode -->
+                <div id="csv_input_section" class="form-section">
+                    <h3>📄 CSV File Upload</h3>
+                    <div class="form-row">
+                        <input type="file" id="scoped_csv_file" name="csv_file" accept=".csv" onchange="previewCSV(event)">
+                        <small>💡 <strong>CSV Format (3 columns):</strong><br>
+                        Column 1: Dimension name (e.g., "Region")<br>
+                        Column 2: Filter values, comma-separated (e.g., "East, West" creates a metric with BOTH values)<br>
+                        Column 3: Follower emails, comma-separated (e.g., "user@example.com, admin@example.com")<br><br>
+                        <strong>Example CSV:</strong><br>
+                        <code style="display:block; background: rgba(0,0,0,0.2); padding: 10px; margin-top: 5px; border-radius: 5px;">
+                        Region,East,user1@example.com<br>
+                        Region,"East, West",user2@example.com<br>
+                        Department,Sales,user3@example.com,user4@example.com
+                        </code>
+                        </small>
+                    </div>
+                    <div id="csv_preview" style="display: none; margin-top: 10px; padding: 10px; background: rgba(0,0,0,0.2); border-radius: 5px;">
+                        <strong>CSV Preview:</strong>
+                        <pre id="csv_preview_content" style="margin-top: 5px; max-height: 200px; overflow-y: auto;"></pre>
+                    </div>
+                </div>
+
+                <!-- Manual Entry Mode -->
+                <div id="manual_input_section" class="form-section" style="display: none;">
+                    <h3>✏️ Manual Entry</h3>
+                    <div class="form-row">
+                        <input type="text" id="scoped_dimension_name" name="dimension_name" placeholder="Dimension Name (e.g., Region)">
+                        <small>💡 The dimension field name you want to filter by</small>
+                    </div>
+                    <div class="form-row">
+                        <textarea id="scoped_dimension_values" name="dimension_values" placeholder="Enter dimension values (comma-separated)" rows="4"></textarea>
+                        <small>💡 Example: East, West, North, South<br>Creates one metric per value (no follower assignment in manual mode)</small>
+                    </div>
+                </div>
+
+                <div class="form-actions">
+                    <button type="submit" class="button">📊 Create Scoped Metrics</button>
+                    <button type="button" class="button secondary" onclick="showTab('home')">← Back to Home</button>
+                </div>
+            </form>
+        </div>
+
+        <!-- Pulse Analytics Tab -->
+        <div id="analytics" class="tab-content">
+            <div class="form-header">
+                <h2>📈 Pulse Analytics</h2>
+                <p>Get comprehensive insights into metric usage, followers, and datasource adoption</p>
+                <button type="button" class="button secondary back-button" onclick="showTab('home')">← Back to Home</button>
+            </div>
+            
+            <form id="analyticsForm" onsubmit="submitAnalytics(event)">
+                <!-- Server Connection Section -->
+                <div class="form-section">
+                    <h3>🔗 Server Connection</h3>
+                    <div class="form-row">
+                        <input type="url" id="analytics_server_url" name="server_url" placeholder="Tableau Server URL (e.g., https://your-server.com)" required>
+                    </div>
+                    <div class="form-row">
+                        <input type="text" id="analytics_api_version" name="api_version" value="3.26" placeholder="API Version (e.g., 3.26)" pattern="^\d+\.\d+$">
+                    </div>
+                    <div class="form-row">
+                        <input type="text" id="analytics_site_content_url" name="site_content_url" placeholder="Site Content URL (blank for Default)">
+                    </div>
+                    <div class="form-row">
+                        <select id="analytics_auth_method" name="auth_method" onchange="toggleAuthFields('analytics')" required>
+                            <option value="">Select Authentication Method</option>
+                            <option value="password">Username/Password</option>
+                            <option value="pat">Personal Access Token</option>
+                        </select>
+                    </div>
+                    <div id="analytics_user_auth" class="auth-fields" style="display: none;">
+                        <div class="form-row">
+                            <input type="text" id="analytics_username" name="username" placeholder="Username">
+                        </div>
+                        <div class="form-row">
+                            <input type="password" id="analytics_password" name="password" placeholder="Password">
+                        </div>
+                    </div>
+                    <div id="analytics_pat_auth" class="auth-fields" style="display: none;">
+                        <div class="form-row">
+                            <input type="text" id="analytics_pat_name" name="pat_name" placeholder="PAT Name">
+                        </div>
+                        <div class="form-row">
+                            <input type="password" id="analytics_pat_token" name="pat_token" placeholder="PAT Value">
+                        </div>
+                    </div>
+                </div>
+
+                <div class="form-actions">
+                    <button type="submit" class="button">📈 Generate Analytics</button>
+                    <button type="button" class="button secondary" onclick="showTab('home')">← Back to Home</button>
+                </div>
+            </form>
+
+            <!-- Analytics Results Display -->
+            <div id="analyticsResults" style="display: none; margin-top: 30px;">
+                <h3>📊 Analytics Dashboard</h3>
+                
+                <!-- Summary Cards -->
+                <div id="analyticsSummary" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 15px; margin-bottom: 30px;"></div>
+                
+                <!-- Top Metrics Table -->
+                <div id="topMetricsSection" style="margin-bottom: 30px;"></div>
+                
+                <!-- Top Definitions Table -->
+                <div id="topDefinitionsSection" style="margin-bottom: 30px;"></div>
+                
+                <!-- Top Datasources Table -->
+                <div id="topDatasourcesSection"></div>
+            </div>
+        </div>
+
+        <!-- TCM Activity Logs Tab -->
+        <div id="tcm-logs" class="tab-content">
+            <div class="form-header">
+                <h2>📋 Tableau Cloud Manager Activity Logs</h2>
+                <p>Download and view activity logs from your Tableau Cloud Manager site</p>
+                <button type="button" class="button secondary back-button" onclick="showTab('home')">← Back to Home</button>
+            </div>
+            
+            <form id="tcmLogsForm" onsubmit="submitTCMLogs(event)">
+                <!-- TCM Connection Section -->
+                <div class="form-section">
+                    <h3>🔗 Tableau Cloud Manager Connection</h3>
+                    <div class="form-row">
+                        <input type="url" id="tcm_uri" name="tcm_uri" placeholder="TCM URI (e.g., https://manage.prod.us-west-2.b.tsi.lan)" required>
+                        <small>💡 Your Tableau Cloud Manager site URL</small>
+                    </div>
+                    <div class="form-row">
+                        <input type="password" id="tcm_pat_token" name="pat_token" placeholder="TCM Personal Access Token" required>
+                        <small>💡 Create a PAT on your TCM site for authentication</small>
+                    </div>
+                    <div class="form-row">
+                        <input type="text" id="tcm_site_luid" name="site_luid" placeholder="Site LUID" required>
+                        <small>💡 The LUID of the Tableau site you want to fetch logs for</small>
+                    </div>
+                    
+                    <!-- Date Range Selection -->
+                    <div class="form-row">
+                        <label style="font-weight: 600; margin-bottom: 8px; display: block;">📅 Date Range:</label>
+                        <select id="tcm_date_range_type" name="date_range_type" onchange="toggleTCMDateInputs()" style="width: 100%; padding: 10px; border: 1px solid #ddd; border-radius: 4px;">
+                            <option value="last_7_days">Last 7 Days</option>
+                            <option value="custom">Custom Date Range</option>
+                        </select>
+                        <small>💡 Choose between recent logs or a specific date range</small>
+                    </div>
+                    
+                    <!-- Custom Date Inputs (hidden by default) -->
+                    <div id="tcm_custom_dates" style="display: none;">
+                        <div class="form-row">
+                            <input type="date" id="tcm_start_date" name="start_date" placeholder="Start Date">
+                            <small>💡 Start date for custom range (will be split into 7-day chunks)</small>
+                        </div>
+                        <div class="form-row">
+                            <input type="date" id="tcm_end_date" name="end_date" placeholder="End Date">
+                            <small>💡 End date for custom range</small>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Tableau PAT for Pulse API Lookups -->
+                <div class="form-section">
+                    <h3>🔐 Tableau Site Credentials (for name lookups)</h3>
+                    <div class="form-row">
+                        <input type="url" id="tcm_tableau_server" name="tableau_server" placeholder="Tableau Server URL (e.g., https://prod-uswest-c.online.tableau.com)" required>
+                        <small>💡 Your Tableau Cloud instance URL (not TCM)</small>
+                    </div>
+                    <div class="form-row">
+                        <input type="text" id="tcm_tableau_site_id" name="tableau_site_id" placeholder="Site ID/Content URL (e.g., mysite)" required>
+                        <small>💡 Your Tableau site's content URL</small>
+                    </div>
+                    <div class="form-row">
+                        <input type="text" id="tcm_tableau_pat_name" name="tableau_pat_name" placeholder="Tableau PAT Name" required>
+                        <small>💡 Personal Access Token name for Tableau API</small>
+                    </div>
+                    <div class="form-row">
+                        <input type="password" id="tcm_tableau_pat_token" name="tableau_pat_token" placeholder="Tableau PAT Token" required>
+                        <small>💡 Personal Access Token secret for Tableau API</small>
+                    </div>
+                </div>
+
+                <!-- Publishing Options -->
+                <div class="form-section">
+                    <h3>📤 Publishing Options</h3>
+                    <div class="form-row">
+                        <label style="display: flex; align-items: center; gap: 10px; cursor: pointer;">
+                            <input type="checkbox" id="tcm_publish_datasources" name="publish_datasources" onchange="toggleTCMPublishOptions()">
+                            <span style="font-weight: 600;">Publish Hyper extracts as datasources to Tableau Cloud</span>
+                        </label>
+                        <small>💡 Automatically publish the generated Hyper files to your Tableau site</small>
+                    </div>
+                    
+                    <!-- Project selection (hidden by default) -->
+                    <div id="tcm_publish_options" style="display: none; margin-top: 15px; padding: 15px; background-color: #f9f9f9; border-radius: 4px;">
+                        <div class="form-row">
+                            <input type="text" id="tcm_project_name" name="project_name" placeholder="Project Name (e.g., Default)">
+                            <small>💡 The Tableau project where datasources will be published</small>
+                        </div>
+                        <div class="form-row">
+                            <input type="text" id="tcm_datasource_prefix" name="datasource_prefix" placeholder="Datasource Name Prefix (optional)" value="TCM Activity">
+                            <small>💡 Prefix for datasource names (e.g., "TCM Activity - User Subscriptions")</small>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="form-actions">
+                    <button type="submit" class="button">📋 Fetch Activity Logs</button>
+                    <button type="button" class="button secondary" onclick="showTab('home')">← Back to Home</button>
+                </div>
+            </form>
+        </div>
+
+        <!-- Zero Follower Metrics Tab -->
+        <div id="zero-followers" class="tab-content">
+            <div class="form-header">
+                <h2>🔍 Zero Follower Metrics</h2>
+                <p>Find metrics within a definition that have no followers</p>
+                <button type="button" class="button secondary back-button" onclick="showTab('home')">← Back to Home</button>
+            </div>
+            
+            <form id="zeroFollowersForm" onsubmit="submitZeroFollowers(event)">
+                <!-- Site Connection Section -->
+                <div class="form-section">
+                    <h3>🔗 Site Connection</h3>
+                    <div class="form-row">
+                        <input type="text" id="zero_host" name="server_host" placeholder="Tableau Server URL (e.g., https://your-server.com)" required>
+                    </div>
+                    <div class="form-row">
+                        <input type="text" id="zero_site" name="site_content_url" placeholder="Site Content URL (blank for Default)">
+                    </div>
+                    <div class="form-row">
+                        <select id="zero_auth_method" name="auth_method" onchange="toggleAuthFields('zero')" required>
+                            <option value="">Select Authentication Method</option>
+                            <option value="password">Username/Password</option>
+                            <option value="pat">Personal Access Token</option>
+                        </select>
+                    </div>
+                    <div id="zero_user_auth" class="auth-fields" style="display: none;">
+                        <div class="form-row">
+                            <input type="text" id="zero_username" name="username" placeholder="Username">
+                        </div>
+                        <div class="form-row">
+                            <input type="password" id="zero_password" name="password" placeholder="Password">
+                        </div>
+                    </div>
+                    <div id="zero_pat_auth" class="auth-fields" style="display: none;">
+                        <div class="form-row">
+                            <input type="text" id="zero_pat_name" name="pat_name" placeholder="PAT Name">
+                        </div>
+                        <div class="form-row">
+                            <input type="password" id="zero_pat_token" name="pat_token" placeholder="PAT Token">
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Definition Selection -->
+                <div class="form-section">
+                    <h3>📊 Definition Selection</h3>
+                    <div class="form-row">
+                        <input type="text" id="zero_definition_id" name="definition_id" placeholder="Pulse Definition ID" required>
+                        <small>Enter the ID of the Pulse definition to analyze for metrics with zero followers</small>
+                    </div>
+                </div>
+
+                <!-- Analysis Options -->
+                <div class="form-section">
+                    <h3>⚙️ Analysis Options</h3>
+                    <div class="form-row">
+                        <label style="display: flex; align-items: center; gap: 10px; cursor: pointer;">
+                            <input type="checkbox" id="zero_include_follower_counts" name="include_follower_counts" value="true" checked>
+                            <span style="font-weight: 600;">Include follower counts</span>
+                        </label>
+                        <small>If unchecked, analysis will be faster by only checking if metrics have followers (not counting them). Follower counts are only used for display/reference.</small>
+                    </div>
+                </div>
+
+                <!-- Deletion Options -->
+                <div class="form-section">
+                    <h3>🗑️ Deletion Options</h3>
+                    <div class="form-row">
+                        <label style="display: flex; align-items: center; gap: 10px; cursor: pointer;">
+                            <input type="checkbox" id="zero_delete_metrics" name="delete_metrics" value="true">
+                            <span style="font-weight: 600;">Delete metrics with zero followers</span>
+                        </label>
+                        <small>⚠️ WARNING: This will permanently delete all non-default metrics that have zero followers. Default metrics cannot be deleted and will be skipped.</small>
+                    </div>
+                </div>
+
+                <div class="form-actions">
+                    <button type="submit" class="button">🔍 Find Zero Follower Metrics</button>
+                    <button type="button" class="button secondary" onclick="showTab('home')">← Back to Home</button>
+                </div>
+            </form>
+        </div>
+
+        <!-- Export Definitions Tab -->
+        <div id="export-definitions" class="tab-content">
+            <div class="form-header">
+                <h2>📑 Export Pulse Definitions</h2>
+                <p>Export all metric definitions from your site to CSV for documentation or analysis</p>
+                <button type="button" class="button secondary back-button" onclick="showTab('home')">← Back to Home</button>
+            </div>
+            
+            <form id="exportDefinitionsForm" onsubmit="submitExportDefinitions(event)">
+                <!-- Server Connection Section -->
+                <div class="form-section">
+                    <h3>🔌 Tableau Server Connection</h3>
+                    <div class="form-row">
+                        <input type="text" id="export_server_url" name="server_url" placeholder="Server URL (e.g., https://10ax.online.tableau.com)" required>
+                    </div>
+                    <div class="form-row">
+                        <input type="text" id="export_api_version" name="api_version" placeholder="API Version (default: 3.26)" value="3.26">
+                    </div>
+                    <div class="form-row">
+                        <input type="text" id="export_site_content_url" name="site_content_url" placeholder="Site Content URL (leave blank for default site)">
+                    </div>
+                </div>
+
+                <!-- Authentication Section -->
+                <div class="form-section">
+                    <h3>🔐 Authentication</h3>
+                    <div class="form-row">
+                        <select id="export_auth_method" name="auth_method" onchange="toggleExportAuthFields()" required>
+                            <option value="">Select Authentication Method</option>
+                            <option value="username">Username/Password</option>
+                            <option value="pat">Personal Access Token</option>
+                        </select>
+                    </div>
+                    <div id="export_user_auth" class="auth-fields" style="display: none;">
+                        <div class="form-row">
+                            <input type="text" id="export_username" name="username" placeholder="Username">
+                        </div>
+                        <div class="form-row">
+                            <input type="password" id="export_password" name="password" placeholder="Password">
+                        </div>
+                    </div>
+                    <div id="export_pat_auth" class="auth-fields" style="display: none;">
+                        <div class="form-row">
+                            <input type="text" id="export_pat_name" name="pat_name" placeholder="PAT Name">
+                        </div>
+                        <div class="form-row">
+                            <input type="password" id="export_pat_token" name="pat_token" placeholder="PAT Token">
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Export Options Section -->
+                <div class="form-section">
+                    <h3>📋 Export Options</h3>
+                    <div class="form-row">
+                        <select id="export_mode" name="export_mode" required>
+                            <option value="basic">Basic - Name, Measure, Time Dimension, Filters</option>
+                            <option value="verbose">Verbose - All Configuration Details</option>
+                        </select>
+                        <small>💡 Basic mode shows essential fields; Verbose includes extension options, comparisons, certification, etc.</small>
+                    </div>
+                    <div class="info-box" style="margin-top: 15px; padding: 12px; background-color: #f0f8ff; border-left: 4px solid #0066cc; border-radius: 4px;">
+                        <strong>ℹ️ Note about Viz State definitions:</strong><br>
+                        Viz State definitions (created from existing visualizations) will show the name and type, but Measure, Time Dimension, and Filters will be marked as "(Viz State)" since they're embedded in the visualization.
+                    </div>
+                </div>
+
+                <div class="form-actions">
+                    <button type="submit" class="button">📑 Export Definitions</button>
+                    <button type="button" class="button secondary" onclick="showTab('home')">← Back to Home</button>
+                </div>
+            </form>
+        </div>
+
+        <!-- Results section -->
+        <div id="results" class="results-section" style="display: none;">
+            <h3 id="resultsTitle">📊 Results</h3>
+            <div id="progress" class="progress-container"></div>
+            <div id="copyResults" class="copy-results"></div>
+            <button class="button" onclick="resetForm()">Start Another Task</button>
+        </div>
+
+        <div id="apiResponse" class="api-response"></div>
+    </div>
+
+    <script>
+        // Tab management
+        function showTab(tabName) {
+            // Hide all tab contents
+            document.querySelectorAll('.tab-content').forEach(tab => {
+                tab.classList.remove('active');
+            });
+            
+            // Remove active class from all tab buttons
+            document.querySelectorAll('.tab-button').forEach(button => {
+                button.classList.remove('active');
+            });
+            
+            // Show selected tab content
+            document.getElementById(tabName).classList.add('active');
+            
+            // Add active class to clicked button
+            event.target.classList.add('active');
+            
+            // Clear previous results when switching tabs
+            clearPreviousResults();
+        }
+
+        // Authentication method toggle
+        function toggleTCMDateInputs() {
+            const dateRangeType = document.getElementById('tcm_date_range_type').value;
+            const customDatesDiv = document.getElementById('tcm_custom_dates');
+            
+            if (dateRangeType === 'custom') {
+                customDatesDiv.style.display = 'block';
+                document.getElementById('tcm_start_date').required = true;
+                document.getElementById('tcm_end_date').required = true;
+            } else {
+                customDatesDiv.style.display = 'none';
+                document.getElementById('tcm_start_date').required = false;
+                document.getElementById('tcm_end_date').required = false;
+            }
+        }
+
+        function toggleTCMPublishOptions() {
+            const publishCheckbox = document.getElementById('tcm_publish_datasources');
+            const publishOptionsDiv = document.getElementById('tcm_publish_options');
+            
+            if (publishCheckbox.checked) {
+                publishOptionsDiv.style.display = 'block';
+                document.getElementById('tcm_project_name').required = true;
+            } else {
+                publishOptionsDiv.style.display = 'none';
+                document.getElementById('tcm_project_name').required = false;
+            }
+        }
+
+        function toggleAuthFields(site) {
+            const authMethod = document.getElementById(site + '_auth_method').value;
+            const userAuth = document.getElementById(site + '_user_auth');
+            const patAuth = document.getElementById(site + '_pat_auth');
+            
+            if (!userAuth || !patAuth) return; // Handle cases where fields don't exist
+            
+            userAuth.style.display = 'none';
+            patAuth.style.display = 'none';
+            
+            if (authMethod === 'u' || authMethod === 'password') {
+                userAuth.style.display = 'block';
+                // Make username/password required
+                const usernameField = document.getElementById(site + '_username');
+                const passwordField = document.getElementById(site + '_password');
+                const patNameField = document.getElementById(site + '_pat_name');
+                const patSecretField = document.getElementById(site + '_pat_secret') || document.getElementById(site + '_pat_token');
+                
+                if (usernameField) usernameField.required = true;
+                if (passwordField) passwordField.required = true;
+                if (patNameField) patNameField.required = false;
+                if (patSecretField) patSecretField.required = false;
+            } else if (authMethod === 'p' || authMethod === 'pat') {
+                patAuth.style.display = 'block';
+                // Make PAT fields required
+                const usernameField = document.getElementById(site + '_username');
+                const passwordField = document.getElementById(site + '_password');
+                const patNameField = document.getElementById(site + '_pat_name');
+                const patSecretField = document.getElementById(site + '_pat_secret') || document.getElementById(site + '_pat_token');
+                
+                if (patNameField) patNameField.required = true;
+                if (patSecretField) patSecretField.required = true;
+                if (usernameField) usernameField.required = false;
+                if (passwordField) passwordField.required = false;
+            }
+        }
+
+        // Clear previous results function
+        function clearPreviousResults() {
+            const resultsSection = document.getElementById('results');
+            const progressDiv = document.getElementById('progress');
+            const resultsDiv = document.getElementById('copyResults');
+            const apiResponse = document.getElementById('apiResponse');
+            
+            if (resultsSection) {
+                resultsSection.style.display = 'none';
+            }
+            if (progressDiv) {
+                progressDiv.innerHTML = '';
+            }
+            if (resultsDiv) {
+                resultsDiv.innerHTML = '';
+            }
+            if (apiResponse) {
+                apiResponse.style.display = 'none';
+                apiResponse.innerHTML = '';
+            }
+        }
+
+        // Form submissions for each utility
+        async function submitCopyDefinitions(event) {
+            event.preventDefault();
+            
+            const formData = new FormData(event.target);
+            const data = Object.fromEntries(formData.entries());
+            
+            // Clear previous results and show new progress
+            clearPreviousResults();
+            showProgress('🚀 Starting copy process...', '📊 Copy Results');
+            
+            try {
+                const response = await fetch('/copy-definitions', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify(data)
+                });
+                
+                const result = await response.json();
+                
+                if (result.success) {
+                    showResults(result, '✅ Copy process completed!');
+                } else {
+                    showError(result.error || 'Unknown error occurred', '❌ Copy process failed');
+                }
+            } catch (error) {
+                console.error('Error:', error);
+                showError('Failed to communicate with server: ' + error.message, '❌ Copy process failed');
+            }
+        }
+
+        async function submitManageFollowers(event) {
+            event.preventDefault();
+            
+            const inputMode = document.getElementById('manage_input_mode').value;
+            
+            // Clear previous results and show new progress
+            clearPreviousResults();
+            showProgress('👥 Managing followers...', '👥 Follower Management Results');
+            
+            try {
+                let response;
+                
+                if (inputMode === 'csv') {
+                    // CSV Upload Mode - use FormData
+                    const formData = new FormData(event.target);
+                    const csvFile = document.getElementById('manage_csv_file').files[0];
+                    
+                    if (!csvFile) {
+                        showError('Please select a CSV file', '❌ Follower management failed');
+                        return;
+                    }
+                    
+                    formData.append('csv_file', csvFile);
+                    formData.append('input_mode', 'csv');
+                    
+                    response = await fetch('/manage-followers', {
+                        method: 'POST',
+                        body: formData  // FormData automatically sets Content-Type with boundary
+                    });
+                } else {
+                    // Manual Entry Mode - use JSON
+                    const formData = new FormData(event.target);
+                    const data = Object.fromEntries(formData.entries());
+                    
+                    // Remove CSV file field if present
+                    delete data.csv_file;
+                    
+                    response = await fetch('/manage-followers', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                        },
+                        body: JSON.stringify(data)
+                    });
+                }
+                
+                const result = await response.json();
+                
+                if (result.success) {
+                    showResults(result, '✅ Follower management completed!');
+                } else {
+                    showError(result.error || 'Unknown error occurred', '❌ Follower management failed');
+                }
+            } catch (error) {
+                console.error('Error:', error);
+                showError('Failed to communicate with server: ' + error.message, '❌ Follower management failed');
+            }
+        }
+        
+        function toggleManageInputMode() {
+            const inputMode = document.getElementById('manage_input_mode').value;
+            const manualSection = document.getElementById('manage_manual_input_section');
+            const csvSection = document.getElementById('manage_csv_input_section');
+            const userEmailsField = document.getElementById('manage_users');
+            
+            if (inputMode === 'csv') {
+                manualSection.style.display = 'none';
+                csvSection.style.display = 'block';
+                userEmailsField.removeAttribute('required');
+            } else {
+                manualSection.style.display = 'block';
+                csvSection.style.display = 'none';
+                userEmailsField.setAttribute('required', 'required');
+            }
+        }
+        
+        function previewManageCSV(event) {
+            const file = event.target.files[0];
+            if (!file) {
+                document.getElementById('manage_csv_preview').style.display = 'none';
+                return;
+            }
+            
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                const content = e.target.result;
+                const lines = content.split('\n').slice(0, 10); // Show first 10 lines
+                const previewContent = lines.join('\n');
+                
+                document.getElementById('manage_csv_preview_content').textContent = previewContent;
+                document.getElementById('manage_csv_preview').style.display = 'block';
+            };
+            reader.readAsText(file);
+        }
+
+        async function submitSwapDatasources(event) {
+            event.preventDefault();
+            
+            const formData = new FormData(event.target);
+            const data = Object.fromEntries(formData.entries());
+            
+            // Clear previous results and show new progress
+            clearPreviousResults();
+            showProgress('🔄 Swapping datasources...', '🔄 Datasource Swap Results');
+            
+            try {
+                const response = await fetch('/swap-datasources', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify(data)
+                });
+                
+                const result = await response.json();
+                
+                if (result.success) {
+                    showResults(result, '✅ Datasource swap completed!');
+                } else {
+                    showError(result.error || 'Unknown error occurred', '❌ Datasource swap failed');
+                }
+            } catch (error) {
+                console.error('Error:', error);
+                showError('Failed to communicate with server: ' + error.message, '❌ Datasource swap failed');
+            }
+        }
+
+        // Show progress
+        function showProgress(message, title = '📊 Results') {
+            const progressDiv = document.getElementById('progress');
+            const resultsTitle = document.getElementById('resultsTitle');
+            
+            progressDiv.innerHTML = `
+                <div class="loading"></div>
+                <span style="margin-left: 10px;">${message}</span>
+            `;
+            
+            resultsTitle.textContent = title;
+            document.getElementById('results').style.display = 'block';
+        }
+
+        // Show results
+        function showResults(result, completionMessage = '✅ Process completed!') {
+            const progressDiv = document.getElementById('progress');
+            const resultsDiv = document.getElementById('copyResults');
+            
+            progressDiv.innerHTML = completionMessage;
+            
+            let resultsHTML = '';
+            if (result.results && result.results.length > 0) {
+                result.results.forEach(item => {
+                    const statusClass = item.success ? 'success' : 'error';
+                    const statusIcon = item.success ? '✅' : '❌';
+                    resultsHTML += `
+                        <div class="result-item ${statusClass}">
+                            ${statusIcon} ${item.message}
+                        </div>
+                    `;
+                });
+            }
+            
+            if (result.summary) {
+                resultsHTML += `
+                    <div class="result-item">
+                        <strong>📊 Summary:</strong><br>
+                        ${result.summary}
+                    </div>
+                `;
+            }
+            
+            resultsDiv.innerHTML = resultsHTML;
+            document.getElementById('results').style.display = 'block';
+        }
+
+        // Show TCM results with tables
+        function showTCMResults(result, completionMessage = '✅ Analysis completed!') {
+            console.log('showTCMResults called with:', result);
+            
+            const progressDiv = document.getElementById('progress');
+            const resultsDiv = document.getElementById('copyResults');
+            
+            progressDiv.innerHTML = completionMessage;
+            
+            let resultsHTML = '';
+            
+            // Show progress messages
+            if (result.results && result.results.length > 0) {
+                result.results.forEach(item => {
+                    const statusClass = item.success ? 'success' : 'error';
+                    const statusIcon = item.success ? '✅' : '❌';
+                    resultsHTML += `
+                        <div class="result-item ${statusClass}">
+                            ${statusIcon} ${item.message}
+                        </div>
+                    `;
+                });
+            }
+            
+            // Show summary
+            if (result.summary) {
+                resultsHTML += `
+                    <div class="result-item">
+                        <strong>📊 Summary:</strong><br>
+                        ${result.summary}
+                    </div>
+                `;
+            }
+            
+            // Show Subscription Events Table
+            console.log('Checking events_data:', result.events_data);
+            if (result.events_data && result.events_data.length > 0) {
+                console.log('Rendering events table with', result.events_data.length, 'rows');
+                
+                // Add CSV download button
+                let eventsTableHTML = '<div class="result-item" style="margin-top: 20px; padding: 15px; background-color: white; border-radius: 8px;">';
+                eventsTableHTML += '<div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">';
+                eventsTableHTML += '<h3 style="margin: 0; color: #333;">📊 Subscription Events (' + result.events_data.length + ' events)</h3>';
+                eventsTableHTML += '<button onclick="downloadEventsCSV()" class="button" style="padding: 8px 16px; font-size: 14px;">📥 Download CSV</button>';
+                eventsTableHTML += '</div>';
+                eventsTableHTML += '<div style="overflow-x: auto; max-height: 500px; overflow-y: auto;">';
+                eventsTableHTML += '<table id="eventsTable" style="width: 100%; border-collapse: collapse; font-size: 12px; background-color: white;">';
+                eventsTableHTML += '<thead style="position: sticky; top: 0; z-index: 1;">';
+                eventsTableHTML += '<tr style="background-color: #f5f5f5; border-bottom: 2px solid #ddd;">';
+                eventsTableHTML += '<th style="padding: 10px; text-align: left; border: 1px solid #ddd; font-weight: 600; white-space: nowrap;">Event Time</th>';
+                eventsTableHTML += '<th style="padding: 10px; text-align: left; border: 1px solid #ddd; font-weight: 600; white-space: nowrap;">Event Type</th>';
+                eventsTableHTML += '<th style="padding: 10px; text-align: left; border: 1px solid #ddd; font-weight: 600; white-space: nowrap;">Subscription Operation</th>';
+                eventsTableHTML += '<th style="padding: 10px; text-align: left; border: 1px solid #ddd; font-weight: 600; white-space: nowrap;">Subscriber User ID</th>';
+                eventsTableHTML += '<th style="padding: 10px; text-align: left; border: 1px solid #ddd; font-weight: 600; white-space: nowrap;">Subscriber User Name</th>';
+                eventsTableHTML += '<th style="padding: 10px; text-align: left; border: 1px solid #ddd; font-weight: 600; white-space: nowrap;">Metric ID</th>';
+                eventsTableHTML += '<th style="padding: 10px; text-align: left; border: 1px solid #ddd; font-weight: 600; white-space: nowrap;">Metric Name</th>';
+                eventsTableHTML += '<th style="padding: 10px; text-align: left; border: 1px solid #ddd; font-weight: 600; white-space: nowrap;">Initiating User ID</th>';
+                eventsTableHTML += '<th style="padding: 10px; text-align: left; border: 1px solid #ddd; font-weight: 600; white-space: nowrap;">Initiating User Name</th>';
+                eventsTableHTML += '</tr>';
+                eventsTableHTML += '</thead>';
+                eventsTableHTML += '<tbody>';
+                
+                // Sort by event time (most recent first) and limit display to first 100 for performance
+                const sortedEvents = result.events_data.sort((a, b) => (b.event_time || '').localeCompare(a.event_time || ''));
+                const displayEvents = sortedEvents.slice(0, 100);
+                
+                displayEvents.forEach((row, index) => {
+                    const bgColor = index % 2 === 0 ? '#fff' : '#f9f9f9';
+                    eventsTableHTML += '<tr style="background-color: ' + bgColor + ';">';
+                    eventsTableHTML += '<td style="padding: 8px; border: 1px solid #ddd; white-space: nowrap;">' + (row.event_time || '') + '</td>';
+                    eventsTableHTML += '<td style="padding: 8px; border: 1px solid #ddd; white-space: nowrap;">' + (row.event_type || '') + '</td>';
+                    eventsTableHTML += '<td style="padding: 8px; border: 1px solid #ddd; white-space: nowrap;">' + (row.subscription_operation || '') + '</td>';
+                    eventsTableHTML += '<td style="padding: 8px; border: 1px solid #ddd; font-family: monospace; font-size: 10px;">' + (row.subscriber_user_id || '') + '</td>';
+                    eventsTableHTML += '<td style="padding: 8px; border: 1px solid #ddd;">' + (row.subscriber_user_name || '') + '</td>';
+                    eventsTableHTML += '<td style="padding: 8px; border: 1px solid #ddd; font-family: monospace; font-size: 10px;">' + (row.metric_id || '') + '</td>';
+                    eventsTableHTML += '<td style="padding: 8px; border: 1px solid #ddd;">' + (row.metric_name || '') + '</td>';
+                    eventsTableHTML += '<td style="padding: 8px; border: 1px solid #ddd; font-family: monospace; font-size: 10px;">' + (row.initiating_user_id || '') + '</td>';
+                    eventsTableHTML += '<td style="padding: 8px; border: 1px solid #ddd;">' + (row.initiating_user_name || '') + '</td>';
+                    eventsTableHTML += '</tr>';
+                });
+                
+                eventsTableHTML += '</tbody>';
+                eventsTableHTML += '</table>';
+                eventsTableHTML += '</div>';
+                
+                if (result.events_data.length > 100) {
+                    eventsTableHTML += '<p style="margin-top: 10px; color: #666; font-size: 12px;">Showing first 100 of ' + result.events_data.length + ' events. Download CSV for full data.</p>';
+                }
+                
+                if (result.csv_file) {
+                    eventsTableHTML += '<p style="margin-top: 10px; color: #28a745; font-size: 12px;">📁 CSV file saved: ' + result.csv_file + '</p>';
+                }
+                
+                eventsTableHTML += '</div>';
+                
+                // Store events data globally for CSV download
+                window.tcmEventsData = result.events_data;
+                
+                resultsHTML += eventsTableHTML;
+                console.log('Events table HTML added, length:', eventsTableHTML.length);
+            } else {
+                console.log('No events data to display');
+            }
+            
+            console.log('Final HTML length:', resultsHTML.length);
+            console.log('HTML contains events table?', resultsHTML.includes('📊 Subscription Events'));
+            
+            resultsDiv.innerHTML = resultsHTML;
+            document.getElementById('results').style.display = 'block';
+            
+            console.log('Results div after update:', resultsDiv.innerHTML.substring(0, 500));
+        }
+
+        // Show error
+        function showError(errorMessage, failureMessage = '❌ Process failed', errorData = null) {
+            const progressDiv = document.getElementById('progress');
+            const resultsDiv = document.getElementById('copyResults');
+            
+            progressDiv.innerHTML = failureMessage;
+            
+            let errorHTML = `
+                <div class="result-item error">
+                    <strong>Error:</strong><br>
+                    ${errorMessage}
+                </div>
+            `;
+            
+            // If error data contains traceback or additional details, show them
+            if (errorData) {
+                if (errorData.error_type) {
+                    errorHTML += `
+                        <div class="result-item error">
+                            <strong>Error Type:</strong> ${errorData.error_type}
+                        </div>
+                    `;
+                }
+                if (errorData.traceback) {
+                    errorHTML += `
+                        <div class="result-item error">
+                            <strong>Stack Trace:</strong><br>
+                            <pre style="background: #1a1a1a; color: #ff6b6b; padding: 10px; border-radius: 4px; overflow-x: auto; font-size: 0.85em;">${errorData.traceback}</pre>
+                        </div>
+                    `;
+                }
+                if (errorData.response) {
+                    errorHTML += `
+                        <div class="result-item error">
+                            <strong>API Response:</strong><br>
+                            <pre style="background: #1a1a1a; color: #ffd43b; padding: 10px; border-radius: 4px; overflow-x: auto; font-size: 0.85em;">${errorData.response}</pre>
+                        </div>
+                    `;
+                }
+            }
+            
+            resultsDiv.innerHTML = errorHTML;
+            document.getElementById('results').style.display = 'block';
+        }
+
+        async function submitUpdatePreferences(event) {
+            event.preventDefault();
+            
+            const formData = new FormData(event.target);
+            const data = Object.fromEntries(formData.entries());
+            
+            // Clear previous results and show new progress
+            clearPreviousResults();
+            showProgress('⚙️ Updating user preferences...', '⚙️ User Preferences Update Results');
+            
+            try {
+                const response = await fetch('/update-preferences', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify(data)
+                });
+
+                const result = await response.json();
+                
+                if (result.success) {
+                    showResults(result, '✅ User preferences update completed!');
+                } else {
+                    showError(result.error, '❌ User preferences update failed');
+                }
+            } catch (error) {
+                console.error('Error:', error);
+                showError('Failed to communicate with server: ' + error.message, '❌ User preferences update failed');
+            }
+        }
+
+        async function submitCheckCertified(event) {
+            event.preventDefault();
+            
+            const formData = new FormData(event.target);
+            const data = Object.fromEntries(formData.entries());
+            
+            // Clear previous results and show new progress
+            clearPreviousResults();
+            showProgress('✅ Checking certified metrics...', '✅ Certification Check Results');
+            
+            try {
+                const response = await fetch('/check-certified-metrics', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify(data)
+                });
+
+                const result = await response.json();
+                
+                if (result.success) {
+                    showResults(result, '✅ Certification check completed!');
+                } else {
+                    showError(result.error, '❌ Certification check failed');
+                }
+            } catch (error) {
+                console.error('Error:', error);
+                showError('Failed to communicate with server: ' + error.message, '❌ Certification check failed');
+            }
+        }
+
+        async function submitBulkScoped(event) {
+            event.preventDefault();
+            
+            // Clear previous results and show new progress
+            clearPreviousResults();
+            showProgress('📊 Creating scoped metrics...', '📊 Bulk Scoped Metrics Results');
+            
+            try {
+                const inputMode = document.getElementById('scoped_input_mode').value;
+                const formData = new FormData(event.target);
+                
+                let response;
+                
+                if (inputMode === 'csv') {
+                    // CSV Upload Mode - send as multipart/form-data
+                    const csvFile = document.getElementById('scoped_csv_file').files[0];
+                    if (!csvFile) {
+                        showError('Please select a CSV file', '❌ Scoped metrics creation failed');
+                        return;
+                    }
+                    
+                    // Send formData directly (includes CSV file)
+                    response = await fetch('/bulk-create-scoped-metrics', {
+                        method: 'POST',
+                        body: formData  // Don't set Content-Type header - browser will set it with boundary
+                    });
+                } else {
+                    // Manual Entry Mode - send as JSON
+                    const data = Object.fromEntries(formData.entries());
+                    response = await fetch('/bulk-create-scoped-metrics', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                        },
+                        body: JSON.stringify(data)
+                    });
+                }
+
+                const result = await response.json();
+                
+                if (result.success) {
+                    showResults(result, '✅ Scoped metrics creation completed!');
+                } else {
+                    // Pass the full error object to showError for stack trace display
+                    showError(result.error || 'Unknown error occurred', '❌ Scoped metrics creation failed', result);
+                }
+            } catch (error) {
+                console.error('Error:', error);
+                showError('Failed to communicate with server: ' + error.message, '❌ Scoped metrics creation failed');
+            }
+        }
+        
+        // Toggle between CSV and manual input modes
+        function toggleInputMode() {
+            const inputMode = document.getElementById('scoped_input_mode').value;
+            const csvSection = document.getElementById('csv_input_section');
+            const manualSection = document.getElementById('manual_input_section');
+            const csvFile = document.getElementById('scoped_csv_file');
+            const dimensionName = document.getElementById('scoped_dimension_name');
+            const dimensionValues = document.getElementById('scoped_dimension_values');
+            
+            if (inputMode === 'csv') {
+                csvSection.style.display = 'block';
+                manualSection.style.display = 'none';
+                csvFile.required = true;
+                dimensionName.required = false;
+                dimensionValues.required = false;
+            } else {
+                csvSection.style.display = 'none';
+                manualSection.style.display = 'block';
+                csvFile.required = false;
+                dimensionName.required = true;
+                dimensionValues.required = true;
+            }
+        }
+        
+        // Preview CSV file contents
+        function previewCSV(event) {
+            const file = event.target.files[0];
+            if (!file) return;
+            
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                const text = e.target.result;
+                const lines = text.split('\n').slice(0, 10); // Show first 10 lines
+                const preview = document.getElementById('csv_preview');
+                const previewContent = document.getElementById('csv_preview_content');
+                
+                previewContent.textContent = lines.join('\n');
+                if (text.split('\n').length > 10) {
+                    previewContent.textContent += '\n... (showing first 10 lines)';
+                }
+                preview.style.display = 'block';
+            };
+            reader.readAsText(file);
+        }
+
+        async function submitAnalytics(event) {
+            event.preventDefault();
+            
+            const formData = new FormData(event.target);
+            const data = Object.fromEntries(formData.entries());
+            
+            // Clear previous results and show new progress
+            clearPreviousResults();
+            showProgress('📈 Generating analytics...', '📈 Pulse Analytics');
+            
+            try {
+                const response = await fetch('/pulse-analytics', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify(data)
+                });
+
+                const result = await response.json();
+                
+                if (result.success) {
+                    // Hide progress and show analytics dashboard
+                    document.getElementById('results').style.display = 'none';
+                    displayAnalytics(result.analytics);
+                } else {
+                    showError(result.error || 'Unknown error occurred', '❌ Analytics generation failed', result);
+                }
+            } catch (error) {
+                console.error('Error:', error);
+                showError('Failed to communicate with server: ' + error.message, '❌ Analytics generation failed');
+            }
+        }
+        
+        function displayAnalytics(analytics) {
+            const analyticsResults = document.getElementById('analyticsResults');
+            const summary = analytics.summary;
+            
+            // Debug logging
+            console.log('Analytics data received:', analytics);
+            console.log('Top metrics:', analytics.top_metrics);
+            console.log('Top definitions:', analytics.top_definitions);
+            console.log('Top datasources:', analytics.top_datasources);
+            
+            // Show the analytics results section
+            analyticsResults.style.display = 'block';
+            analyticsResults.scrollIntoView({ behavior: 'smooth' });
+            
+            // Display summary cards
+            const summaryDiv = document.getElementById('analyticsSummary');
+            summaryDiv.innerHTML = `
+                <div style="background: rgba(78, 205, 196, 0.2); padding: 20px; border-radius: 10px; text-align: center;">
+                    <div style="font-size: 2.5em; font-weight: bold; color: #4ECDC4;">${summary.total_definitions}</div>
+                    <div style="margin-top: 10px;">Definitions</div>
+                </div>
+                <div style="background: rgba(255, 229, 93, 0.2); padding: 20px; border-radius: 10px; text-align: center;">
+                    <div style="font-size: 2.5em; font-weight: bold; color: #FFE55D;">${summary.total_metrics}</div>
+                    <div style="margin-top: 10px;">Metrics</div>
+                </div>
+                <div style="background: rgba(255, 107, 107, 0.2); padding: 20px; border-radius: 10px; text-align: center;">
+                    <div style="font-size: 2.5em; font-weight: bold; color: #FF6B6B;">${summary.total_subscriptions}</div>
+                    <div style="margin-top: 10px;">Subscriptions</div>
+                </div>
+                <div style="background: rgba(200, 214, 229, 0.2); padding: 20px; border-radius: 10px; text-align: center;">
+                    <div style="font-size: 2.5em; font-weight: bold; color: #C8D6E5;">${summary.unique_followers}</div>
+                    <div style="margin-top: 10px;">Unique Followers</div>
+                </div>
+                <div style="background: rgba(40, 167, 69, 0.2); padding: 20px; border-radius: 10px; text-align: center;">
+                    <div style="font-size: 2.5em; font-weight: bold; color: #28a745;">${summary.certified_definitions}</div>
+                    <div style="margin-top: 10px;">Certified</div>
+                </div>
+                <div style="background: rgba(108, 92, 231, 0.2); padding: 20px; border-radius: 10px; text-align: center;">
+                    <div style="font-size: 2.5em; font-weight: bold; color: #6C5CE7;">${summary.unique_datasources}</div>
+                    <div style="margin-top: 10px;">Datasources</div>
+                </div>
+            `;
+            
+            // Display top metrics
+            const topMetricsSection = document.getElementById('topMetricsSection');
+            
+            console.log('Processing top metrics, count:', analytics.top_metrics?.length);
+            
+            let topMetricsHTML = '';
+            if (analytics.top_metrics && analytics.top_metrics.length > 0) {
+                topMetricsHTML = analytics.top_metrics.map((metric, index) => `
+                    <tr>
+                        <td style="padding: 12px; border-bottom: 1px solid rgba(255, 255, 255, 0.1);">${index + 1}</td>
+                        <td style="padding: 12px; border-bottom: 1px solid rgba(255, 255, 255, 0.1);">${metric.name || metric.definition_name || 'Unknown'}</td>
+                        <td style="padding: 12px; border-bottom: 1px solid rgba(255, 255, 255, 0.1);">${metric.is_default ? '✅ Yes' : 'No'}</td>
+                        <td style="font-weight: bold; color: #4ECDC4; padding: 12px; border-bottom: 1px solid rgba(255, 255, 255, 0.1);">${metric.follower_count || 0}</td>
+                    </tr>
+                `).join('');
+            } else {
+                topMetricsHTML = '<tr><td colspan="4" style="padding: 20px; text-align: center;">No metrics found</td></tr>';
+            }
+            
+            topMetricsSection.innerHTML = `
+                <h4>🏆 Top 10 Most Followed Metrics</h4>
+                <div style="overflow-x: auto;">
+                    <table style="width: 100%; border-collapse: collapse; background: rgba(255, 255, 255, 0.05); border-radius: 10px;">
+                        <thead>
+                            <tr style="background: rgba(78, 205, 196, 0.2);">
+                                <th style="padding: 12px; text-align: left; border-bottom: 2px solid rgba(255, 255, 255, 0.1);">#</th>
+                                <th style="padding: 12px; text-align: left; border-bottom: 2px solid rgba(255, 255, 255, 0.1);">Metric Name</th>
+                                <th style="padding: 12px; text-align: left; border-bottom: 2px solid rgba(255, 255, 255, 0.1);">Default</th>
+                                <th style="padding: 12px; text-align: left; border-bottom: 2px solid rgba(255, 255, 255, 0.1);">Followers</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            ${topMetricsHTML}
+                        </tbody>
+                    </table>
+                </div>
+            `;
+            
+            // Display top definitions
+            const topDefinitionsSection = document.getElementById('topDefinitionsSection');
+            
+            console.log('Processing top definitions, count:', analytics.top_definitions?.length);
+            
+            let topDefinitionsHTML = '';
+            if (analytics.top_definitions && analytics.top_definitions.length > 0) {
+                topDefinitionsHTML = analytics.top_definitions.map((def, index) => `
+                    <tr>
+                        <td style="padding: 12px; border-bottom: 1px solid rgba(255, 255, 255, 0.1);">${index + 1}</td>
+                        <td style="padding: 12px; border-bottom: 1px solid rgba(255, 255, 255, 0.1);">${def.name || 'Unnamed'}</td>
+                        <td style="padding: 12px; border-bottom: 1px solid rgba(255, 255, 255, 0.1);">${def.is_certified ? '✅ Yes' : 'No'}</td>
+                        <td style="padding: 12px; border-bottom: 1px solid rgba(255, 255, 255, 0.1);">${def.metric_count || 0}</td>
+                        <td style="font-weight: bold; color: #FFE55D; padding: 12px; border-bottom: 1px solid rgba(255, 255, 255, 0.1);">${def.total_followers || 0}</td>
+                    </tr>
+                `).join('');
+            } else {
+                topDefinitionsHTML = '<tr><td colspan="5" style="padding: 20px; text-align: center;">No definitions found</td></tr>';
+            }
+            
+            topDefinitionsSection.innerHTML = `
+                <h4>📊 Top 10 Definitions by Total Followers</h4>
+                <div style="overflow-x: auto;">
+                    <table style="width: 100%; border-collapse: collapse; background: rgba(255, 255, 255, 0.05); border-radius: 10px;">
+                        <thead>
+                            <tr style="background: rgba(255, 229, 93, 0.2);">
+                                <th style="padding: 12px; text-align: left; border-bottom: 2px solid rgba(255, 255, 255, 0.1);">#</th>
+                                <th style="padding: 12px; text-align: left; border-bottom: 2px solid rgba(255, 255, 255, 0.1);">Definition Name</th>
+                                <th style="padding: 12px; text-align: left; border-bottom: 2px solid rgba(255, 255, 255, 0.1);">Certified</th>
+                                <th style="padding: 12px; text-align: left; border-bottom: 2px solid rgba(255, 255, 255, 0.1);">Metrics</th>
+                                <th style="padding: 12px; text-align: left; border-bottom: 2px solid rgba(255, 255, 255, 0.1);">Total Followers</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            ${topDefinitionsHTML}
+                        </tbody>
+                    </table>
+                </div>
+            `;
+            
+            // Display top datasources
+            const topDatasourcesSection = document.getElementById('topDatasourcesSection');
+            
+            console.log('Processing top datasources, count:', analytics.top_datasources?.length);
+            
+            let topDatasourcesHTML = '';
+            if (analytics.top_datasources && analytics.top_datasources.length > 0) {
+                topDatasourcesHTML = analytics.top_datasources.map((ds, index) => `
+                    <tr>
+                        <td style="padding: 12px; border-bottom: 1px solid rgba(255, 255, 255, 0.1);">${index + 1}</td>
+                        <td style="padding: 12px; border-bottom: 1px solid rgba(255, 255, 255, 0.1);">${ds.name || ds.id || 'Unknown'}</td>
+                        <td style="padding: 12px; border-bottom: 1px solid rgba(255, 255, 255, 0.1);">${ds.definition_count || 0}</td>
+                        <td style="padding: 12px; border-bottom: 1px solid rgba(255, 255, 255, 0.1);">${ds.metric_count || 0}</td>
+                        <td style="font-weight: bold; color: #6C5CE7; padding: 12px; border-bottom: 1px solid rgba(255, 255, 255, 0.1);">${ds.follower_count || 0}</td>
+                    </tr>
+                `).join('');
+            } else {
+                topDatasourcesHTML = '<tr><td colspan="5" style="padding: 20px; text-align: center;">No datasources found</td></tr>';
+            }
+            
+            topDatasourcesSection.innerHTML = `
+                <h4>🗄️ Top 10 Datasources by Usage</h4>
+                <div style="overflow-x: auto;">
+                    <table style="width: 100%; border-collapse: collapse; background: rgba(255, 255, 255, 0.05); border-radius: 10px;">
+                        <thead>
+                            <tr style="background: rgba(108, 92, 231, 0.2);">
+                                <th style="padding: 12px; text-align: left; border-bottom: 2px solid rgba(255, 255, 255, 0.1);">#</th>
+                                <th style="padding: 12px; text-align: left; border-bottom: 2px solid rgba(255, 255, 255, 0.1);">Datasource Name</th>
+                                <th style="padding: 12px; text-align: left; border-bottom: 2px solid rgba(255, 255, 255, 0.1);">Definitions</th>
+                                <th style="padding: 12px; text-align: left; border-bottom: 2px solid rgba(255, 255, 255, 0.1);">Metrics</th>
+                                <th style="padding: 12px; text-align: left; border-bottom: 2px solid rgba(255, 255, 255, 0.1);">Total Followers</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            ${topDatasourcesHTML}
+                        </tbody>
+                    </table>
+                </div>
+            `;
+        }
+
+        // Download events data as CSV
+        function downloadEventsCSV() {
+            if (!window.tcmEventsData || window.tcmEventsData.length === 0) {
+                alert('No events data available to download');
+                return;
+            }
+            
+            // Create CSV content with tab separator (matching the server-side format)
+            const headers = [
+                'Event Time',
+                'Event Type',
+                'Subscription Operation',
+                'Subscriber User ID',
+                'Subscriber User Name or email',
+                'Metric ID',
+                'Metric Name',
+                'Initiating User ID',
+                'Initiating User Name'
+            ];
+            
+            let csvContent = headers.join('\t') + '\n';
+            
+            // Sort by event time (most recent first)
+            const sortedEvents = window.tcmEventsData.sort((a, b) => (b.event_time || '').localeCompare(a.event_time || ''));
+            
+            sortedEvents.forEach(event => {
+                const row = [
+                    event.event_time || '',
+                    event.event_type || '',
+                    event.subscription_operation || '',
+                    event.subscriber_user_id || '',
+                    event.subscriber_user_name || '',
+                    event.metric_id || '',
+                    event.metric_name || '',
+                    event.initiating_user_id || '',
+                    event.initiating_user_name || ''
+                ];
+                csvContent += row.join('\t') + '\n';
+            });
+            
+            // Create and trigger download
+            const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+            const link = document.createElement('a');
+            const timestamp = new Date().toISOString().replace(/[:.]/g, '-').slice(0, 19);
+            link.href = URL.createObjectURL(blob);
+            link.download = `tcm_subscription_events_${timestamp}.csv`;
+            link.style.display = 'none';
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+        }
+
+        async function submitTCMLogs(event) {
+            event.preventDefault();
+            
+            const formData = new FormData(event.target);
+            const data = Object.fromEntries(formData.entries());
+            
+            // Clear previous results and show new progress
+            clearPreviousResults();
+            showProgress('📋 Fetching TCM activity logs...', '📋 TCM Activity Logs Results');
+            
+            try {
+                const response = await fetch('/tcm-activity-logs', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify(data)
+                });
+
+                const result = await response.json();
+                
+                console.log('TCM Result:', result);
+                console.log('Events data:', result.events_data);
+                console.log('CSV file:', result.csv_file);
+                
+                if (result.success) {
+                    showTCMResults(result, '✅ Activity logs analyzed successfully!');
+                } else {
+                    showError(result.error || 'Unknown error occurred', '❌ TCM activity log retrieval failed', result);
+                }
+            } catch (error) {
+                console.error('Error:', error);
+                showError('Failed to communicate with server: ' + error.message, '❌ TCM activity log retrieval failed');
+            }
+        }
+
+        // Toggle auth fields for export definitions
+        function toggleExportAuthFields() {
+            const authMethod = document.getElementById('export_auth_method').value;
+            const userAuth = document.getElementById('export_user_auth');
+            const patAuth = document.getElementById('export_pat_auth');
+            
+            userAuth.style.display = authMethod === 'username' ? 'block' : 'none';
+            patAuth.style.display = authMethod === 'pat' ? 'block' : 'none';
+        }
+
+        async function submitZeroFollowers(event) {
+            event.preventDefault();
+            
+            const formData = new FormData(event.target);
+            const data = Object.fromEntries(formData.entries());
+            
+            // Handle checkboxes - if checked, set to true, otherwise false
+            data.delete_metrics = document.getElementById('zero_delete_metrics').checked;
+            data.include_follower_counts = document.getElementById('zero_include_follower_counts').checked;
+            
+            // Clear previous results and show new progress
+            const progressMessage = data.delete_metrics 
+                ? '🔍 Analyzing and deleting metrics with zero followers...' 
+                : '🔍 Analyzing metrics for zero followers...';
+            clearPreviousResults();
+            showProgress(progressMessage, '🔍 Zero Follower Metrics Results');
+            
+            try {
+                const response = await fetch('/zero-follower-metrics', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify(data)
+                });
+                
+                const result = await response.json();
+                
+                if (result.success) {
+                    showZeroFollowerResults(result, '✅ Analysis completed!');
+                } else {
+                    showError(result.error || 'Unknown error occurred', '❌ Zero follower analysis failed');
+                }
+            } catch (error) {
+                console.error('Error:', error);
+                showError('Failed to communicate with server: ' + error.message, '❌ Zero follower analysis failed');
+            }
+        }
+
+        // Submit export definitions form
+        async function submitExportDefinitions(event) {
+            event.preventDefault();
+            
+            const formData = new FormData(event.target);
+            const data = Object.fromEntries(formData.entries());
+            
+            // Clear previous results and show progress
+            clearPreviousResults();
+            showProgress('📑 Exporting definitions...', '📑 Export Definitions Results');
+            
+            try {
+                const response = await fetch('/export-definitions', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify(data)
+                });
+
+                const result = await response.json();
+                
+                console.log('Export Result:', result);
+                
+                if (result.success) {
+                    showExportDefinitionsResults(result, '✅ Definitions exported successfully!');
+                } else {
+                    showError(result.error || 'Unknown error occurred', '❌ Definition export failed', result);
+                }
+            } catch (error) {
+                console.error('Error:', error);
+                showError('Failed to communicate with server: ' + error.message, '❌ Definition export failed');
+            }
+        }
+
+        function showZeroFollowerResults(result, completionMessage = '✅ Analysis completed!') {
+            const progressDiv = document.getElementById('progress');
+            const resultsDiv = document.getElementById('copyResults');
+            
+            progressDiv.innerHTML = completionMessage;
+            
+            let resultsHTML = '';
+            
+            // Show progress messages
+            if (result.results && result.results.length > 0) {
+                result.results.forEach(item => {
+                    const statusClass = item.success ? 'success' : 'error';
+                    const statusIcon = item.success ? '✅' : '❌';
+                    resultsHTML += `
+                        <div class="result-item ${statusClass}">
+                            ${statusIcon} ${item.message}
+                        </div>
+                    `;
+                });
+            }
+            
+            // Show summary
+            if (result.summary) {
+                resultsHTML += `
+                    <div class="result-item">
+                        <strong>📊 Summary:</strong><br>
+                        ${result.summary}
+                    </div>
+                `;
+            }
+            
+            // Show deletion stats if deletion was performed
+            if (result.deleted_count !== undefined && result.deleted_count > 0) {
+                resultsHTML += `
+                    <div class="result-item" style="margin-top: 20px; padding: 15px; background-color: #f0f9ff; border-left: 4px solid #1f5f99;">
+                        <h4>🗑️ Deletion Results</h4>
+                        <ul style="margin: 10px 0; padding-left: 20px;">
+                            <li><strong>Deleted:</strong> ${result.deleted_count} metrics</li>
+                            <li><strong>Failed:</strong> ${result.failed_deletions || 0} metrics</li>
+                            <li><strong>Skipped (Default):</strong> ${result.skipped_default || 0} metrics</li>
+                        </ul>
+                    </div>
+                `;
+            }
+            
+            // Show zero follower metrics IDs in a list
+            if (result.zero_follower_metrics && result.zero_follower_metrics.length > 0) {
+                const metricIds = result.zero_follower_metrics.map(m => m.id);
+                const defaultMetrics = result.zero_follower_metrics.filter(m => m.is_default);
+                const scopedMetrics = result.zero_follower_metrics.filter(m => !m.is_default);
+                
+                resultsHTML += `
+                    <div class="result-item" style="margin-top: 20px;">
+                        <h4>🚫 Metrics with Zero Followers (${result.zero_follower_metrics.length})</h4>
+                        <div style="margin-top: 10px; padding: 15px; background-color: #f9f9f9; border-radius: 6px;">
+                            <p style="margin-bottom: 10px;"><strong>All Metric IDs:</strong></p>
+                            <p style="font-family: monospace; font-size: 0.85rem; word-break: break-all; color: #374151;">
+                                ${metricIds.join(', ')}
+                            </p>
+                            ${defaultMetrics.length > 0 ? `
+                                <p style="margin-top: 15px; margin-bottom: 5px;"><strong>Default Metrics (${defaultMetrics.length}):</strong></p>
+                                <p style="font-family: monospace; font-size: 0.85rem; word-break: break-all; color: #374151;">
+                                    ${defaultMetrics.map(m => m.id).join(', ')}
+                                </p>
+                            ` : ''}
+                            ${scopedMetrics.length > 0 ? `
+                                <p style="margin-top: 15px; margin-bottom: 5px;"><strong>Scoped Metrics (${scopedMetrics.length}):</strong></p>
+                                <p style="font-family: monospace; font-size: 0.85rem; word-break: break-all; color: #374151;">
+                                    ${scopedMetrics.map(m => m.id).join(', ')}
+                                </p>
+                            ` : ''}
+                        </div>
+                    </div>
+                `;
+            }
+            
+            // Show metrics with followers for comparison
+            if (result.metrics_with_followers && result.metrics_with_followers.length > 0) {
+                // Check if follower counts were included in the analysis
+                const showFollowerCounts = result.include_follower_counts !== false;
+                const countsNote = !showFollowerCounts 
+                    ? '<p style="font-size: 0.85rem; color: #6b7280; margin-bottom: 10px;"><em>ℹ️ Note: Follower counts not included in analysis (faster mode enabled)</em></p>'
+                    : '';
+                
+                resultsHTML += `
+                    <div class="result-item" style="margin-top: 20px;">
+                        <h4>👥 Metrics with Followers (${result.metrics_with_followers.length})</h4>
+                        ${countsNote}
+                        <div style="overflow-x: auto; margin-top: 10px;">
+                            <table style="width: 100%; border-collapse: collapse; font-size: 0.9rem;">
+                                <thead>
+                                    <tr style="background: #f3f4f6;">
+                                        <th style="padding: 10px; text-align: left; border: 1px solid #e5e7eb;">Metric Name</th>
+                                        <th style="padding: 10px; text-align: left; border: 1px solid #e5e7eb;">Default</th>
+                                        ${showFollowerCounts ? '<th style="padding: 10px; text-align: left; border: 1px solid #e5e7eb;">Followers</th>' : ''}
+                                        <th style="padding: 10px; text-align: left; border: 1px solid #e5e7eb;">Metric ID</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    ${result.metrics_with_followers.map((m, i) => `
+                                        <tr style="background: ${i % 2 === 0 ? '#fff' : '#f9f9f9'};">
+                                            <td style="padding: 10px; border: 1px solid #e5e7eb;">${m.name}</td>
+                                            <td style="padding: 10px; border: 1px solid #e5e7eb;">${m.is_default ? '⭐ Yes' : 'No'}</td>
+                                            ${showFollowerCounts ? `<td style="padding: 10px; border: 1px solid #e5e7eb; font-weight: bold; color: #1f5f99;">${m.follower_count}</td>` : ''}
+                                            <td style="padding: 10px; border: 1px solid #e5e7eb; font-family: monospace; font-size: 0.8rem;">${m.id}</td>
+                                        </tr>
+                                    `).join('')}
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                `;
+            }
+            
+            resultsDiv.innerHTML = resultsHTML;
+            document.getElementById('results').style.display = 'block';
+        }
+
+        // Show export definitions results
+        function showExportDefinitionsResults(result, completionMessage = '✅ Export completed!') {
+            const progressDiv = document.getElementById('progress');
+            const resultsDiv = document.getElementById('copyResults');
+            
+            progressDiv.innerHTML = completionMessage;
+            
+            let resultsHTML = '';
+            
+            // Show progress messages
+            if (result.results && result.results.length > 0) {
+                result.results.forEach(r => {
+                    const className = r.success ? 'success' : 'error';
+                    resultsHTML += `<div class="result-item ${className}">${r.message}</div>`;
+                });
+            }
+            
+            // Show summary
+            if (result.summary) {
+                resultsHTML += `
+                    <div class="result-item">
+                        <strong>📊 Summary:</strong><br>
+                        ${result.summary}
+                    </div>
+                `;
+            }
+            
+            // Show definitions table and download button
+            if (result.csv_data && result.csv_data.length > 0) {
+                // Store data globally for CSV download
+                window.exportDefinitionsData = result.csv_data;
+                window.exportDefinitionsContent = result.csv_content;
+                window.exportMode = result.export_mode;
+                
+                let tableHTML = '<div class="result-item" style="margin-top: 20px; padding: 15px; background-color: white; border-radius: 8px;">';
+                tableHTML += '<div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">';
+                tableHTML += '<h3 style="margin: 0; color: #333;">📊 Definitions (' + result.csv_data.length + ' total)</h3>';
+                tableHTML += '<button onclick="downloadDefinitionsCSV()" class="button" style="padding: 8px 16px; font-size: 14px;">📥 Download CSV</button>';
+                tableHTML += '</div>';
+                tableHTML += '<div style="overflow-x: auto; max-height: 400px; overflow-y: auto;">';
+                tableHTML += '<table style="width: 100%; border-collapse: collapse; font-size: 12px; background-color: white;">';
+                tableHTML += '<thead style="position: sticky; top: 0; z-index: 1;">';
+                tableHTML += '<tr style="background-color: #f5f5f5; border-bottom: 2px solid #ddd;">';
+                
+                // Use ordered column names from backend (or fall back to Object.keys)
+                const headers = result.csv_columns || Object.keys(result.csv_data[0]);
+                headers.forEach(header => {
+                    tableHTML += '<th style="padding: 10px; text-align: left; border: 1px solid #ddd; font-weight: 600; white-space: nowrap;">' + header + '</th>';
+                });
+                tableHTML += '</tr></thead><tbody>';
+                
+                // Show first 50 rows for preview
+                const previewRows = result.csv_data.slice(0, 50);
+                previewRows.forEach((row, index) => {
+                    const bgColor = index % 2 === 0 ? '#fff' : '#f9f9f9';
+                    tableHTML += '<tr style="background-color: ' + bgColor + ';">';
+                    headers.forEach(header => {
+                        let value = row[header] || '';
+                        // Truncate long values
+                        if (value.length > 50) {
+                            value = value.substring(0, 47) + '...';
+                        }
+                        tableHTML += '<td style="padding: 8px; border: 1px solid #ddd; white-space: nowrap;">' + value + '</td>';
+                    });
+                    tableHTML += '</tr>';
+                });
+                
+                tableHTML += '</tbody></table></div>';
+                
+                if (result.csv_data.length > 50) {
+                    tableHTML += '<p style="margin-top: 10px; color: #666; font-size: 12px;">Showing first 50 of ' + result.csv_data.length + ' definitions. Download CSV for full data.</p>';
+                }
+                
+                if (result.csv_filename) {
+                    tableHTML += '<p style="margin-top: 10px; color: #28a745; font-size: 12px;">📁 File saved: ' + result.csv_filename + '</p>';
+                }
+                
+                tableHTML += '</div>';
+                resultsHTML += tableHTML;
+            }
+            
+            resultsDiv.innerHTML = resultsHTML;
+            document.getElementById('results').style.display = 'block';
+        }
+
+        // Download definitions as CSV
+        function downloadDefinitionsCSV() {
+            if (!window.exportDefinitionsContent) {
+                alert('No definitions data available to download');
+                return;
+            }
+            
+            const blob = new Blob([window.exportDefinitionsContent], { type: 'text/csv;charset=utf-8;' });
+            const link = document.createElement('a');
+            const timestamp = new Date().toISOString().replace(/[:.]/g, '-').slice(0, 19);
+            link.href = URL.createObjectURL(blob);
+            link.download = `pulse_definitions_${window.exportMode || 'export'}_${timestamp}.csv`;
+            link.style.display = 'none';
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+        }
+
+        // Reset form and return to home
+        function resetForm() {
+            // Reset all forms
+            const forms = ['copyDefinitionsForm', 'manageFollowersForm', 'swapDatasourcesForm', 'updatePreferencesForm', 'checkCertifiedForm', 'bulkScopedForm', 'analyticsForm', 'tcmLogsForm', 'zeroFollowersForm', 'exportDefinitionsForm'];
+            forms.forEach(formId => {
+                const form = document.getElementById(formId);
+                if (form) form.reset();
+            });
+            
+            // Clear all previous results
+            clearPreviousResults();
+            
+            // Hide analytics results
+            const analyticsResults = document.getElementById('analyticsResults');
+            if (analyticsResults) analyticsResults.style.display = 'none';
+            
+            // Return to home
+            showTab('home');
+        }
+
+        // Test API connection (original function)
+        async function callAPI() {
+            try {
+                // Clear previous results before testing API
+                clearPreviousResults();
+                
+                const response = await fetch('/api/hello');
+                const data = await response.json();
+                const apiDiv = document.getElementById('apiResponse');
+                apiDiv.innerHTML = `
+                    <strong>✅ API Connection Test Successful:</strong><br>
+                    ${JSON.stringify(data, null, 2)}
+                `;
+                apiDiv.style.display = 'block';
+            } catch (error) {
+                console.error('Error calling API:', error);
+                const apiDiv = document.getElementById('apiResponse');
+                apiDiv.innerHTML = '<strong>❌ API Connection Test Failed</strong>';
+                apiDiv.style.display = 'block';
+            }
+        }
+    </script>
+</body>
+</html>
