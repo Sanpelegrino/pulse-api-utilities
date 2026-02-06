@@ -507,6 +507,134 @@
             <button class="tab-button" onclick="showTab('tcm-logs')">📋 TCM Logs</button>
             <button class="tab-button" onclick="showTab('zero-followers')">🔍 Zero Followers</button>
             <button class="tab-button" onclick="showTab('export-definitions')">📑 Export Definitions</button>
+            <button class="tab-button" onclick="showTab('bulk-create-metrics')">🆕 Bulk Create Metrics</button>
+        </div>
+        <!-- Bulk Create Metrics Tab -->
+        <div id="bulk-create-metrics" class="tab-content">
+            <div class="form-header">
+                <h2>🆕 Bulk Create Metrics</h2>
+                <p>Bulk create metrics by authenticating with Tableau Cloud.</p>
+                <button type="button" class="button secondary back-button" onclick="showTab('home')">← Back to Home</button>
+            </div>
+            <form id="bulkCreateMetricsForm" onsubmit="submitBulkCreateMetrics(event)">
+                <div class="form-section">
+                    <h3>🔐 Authenticate to Tableau Cloud</h3>
+                    <div class="form-row">
+                        <input type="text" id="bulk_host" name="server_host" placeholder="Tableau Server URL (e.g., https://your-server.com)" required>
+                    </div>
+                    <div class="form-row">
+                        <input type="text" id="bulk_site" name="site_content_url" placeholder="Site Content URL" required>
+                    </div>
+                    <div class="form-row">
+                        <select id="bulk_auth_method" name="auth_method" onchange="toggleAuthFields('bulk')" required>
+                            <option value="">Select Authentication Method</option>
+                            <option value="password">Username/Password</option>
+                            <option value="pat">Personal Access Token</option>
+                        </select>
+                    </div>
+                    <div id="bulk_user_auth" class="auth-fields" style="display: none;">
+                        <div class="form-row">
+                            <input type="text" id="bulk_username" name="username" placeholder="Username">
+                        </div>
+                        <div class="form-row">
+                            <input type="password" id="bulk_password" name="password" placeholder="Password">
+                        </div>
+                    </div>
+                    <div id="bulk_pat_auth" class="auth-fields" style="display: none;">
+                        <div class="form-row">
+                            <input type="text" id="bulk_pat_name" name="pat_name" placeholder="PAT Name">
+                        </div>
+                        <div class="form-row">
+                            <input type="password" id="bulk_pat_token" name="pat_token" placeholder="PAT Token">
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Searchable Dropdown Section -->
+                <div class="form-section">
+                    <h3>🔽 Select Published Data Source</h3>
+                    <div class="form-row" style="width:100%; position:relative;">
+                        <div id="customDropdown" class="custom-dropdown" style="width:100%;">
+                            <div class="dropdown-selected" id="dropdownSelected" onclick="toggleDropdown()">Select a published data source...</div>
+                            <div class="dropdown-list" id="dropdownList" style="display:none; width:100%; position:absolute; z-index:10; background:#fff; border:1px solid #d1d5db; border-radius:6px; max-height:200px; overflow-y:auto;">
+                                <input type="text" id="dropdownSearch" placeholder="Search data sources..." style="width:98%; margin:8px 1%; padding:8px; border-radius:4px; border:1px solid #e5e7eb;" onkeyup="filterDropdownOptions()">
+                                <div class="dropdown-option" onclick="selectDropdownOption('Sales Pipeline Data')">Sales Pipeline Data</div>
+                                <div class="dropdown-option" onclick="selectDropdownOption('Customer 360 Master')">Customer 360 Master</div>
+                                <div class="dropdown-option" onclick="selectDropdownOption('Marketing Campaign Results')">Marketing Campaign Results</div>
+                                <div class="dropdown-option" onclick="selectDropdownOption('Product Inventory')">Product Inventory</div>
+                                <div class="dropdown-option" onclick="selectDropdownOption('Employee Directory')">Employee Directory</div>
+                                <div class="dropdown-option" onclick="selectDropdownOption('Financial Transactions 2025')">Financial Transactions 2025</div>
+                            </div>
+                            <input type="hidden" id="metricDropdownValue" name="metricDropdown">
+                        </div>
+                    </div>
+                </div>
+                                <style>
+                                .custom-dropdown { position: relative; width: 100%; }
+                                .dropdown-selected {
+                                    width: 100%;
+                                    padding: 12px 16px;
+                                    border: 1px solid #d1d5db;
+                                    border-radius: 6px;
+                                    background: #fff;
+                                    cursor: pointer;
+                                    color: #1f2937;
+                                    font-size: 1rem;
+                                    margin-bottom: 0;
+                                }
+                                .dropdown-list {
+                                    box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+                                }
+                                .dropdown-option {
+                                    padding: 10px 16px;
+                                    cursor: pointer;
+                                    transition: background 0.2s;
+                                }
+                                .dropdown-option:hover {
+                                    background: #f3f4f6;
+                                }
+                                </style>
+                                <script>
+                                // Custom dropdown logic
+                                function toggleDropdown() {
+                                    var list = document.getElementById('dropdownList');
+                                    list.style.display = (list.style.display === 'none' || list.style.display === '') ? 'block' : 'none';
+                                }
+                                function selectDropdownOption(val) {
+                                    document.getElementById('dropdownSelected').innerText = val;
+                                    document.getElementById('metricDropdownValue').value = val;
+                                    document.getElementById('dropdownList').style.display = 'none';
+                                }
+                                function filterDropdownOptions() {
+                                    var input = document.getElementById('dropdownSearch');
+                                    var filter = input.value.toLowerCase();
+                                    var options = document.querySelectorAll('#dropdownList .dropdown-option');
+                                    for (var i = 0; i < options.length; i++) {
+                                        var txt = options[i].innerText.toLowerCase();
+                                        if (txt.indexOf(filter) > -1) {
+                                            options[i].style.display = '';
+                                        } else {
+                                            options[i].style.display = 'none';
+                                        }
+                                    }
+                                    document.getElementById('dropdownList').style.display = 'block';
+                                }
+                                // Hide dropdown if clicking outside
+                                document.addEventListener('click', function(event) {
+                                    var dropdown = document.getElementById('customDropdown');
+                                    if (!dropdown.contains(event.target)) {
+                                        document.getElementById('dropdownList').style.display = 'none';
+                                    }
+                                });
+                                </script>
+                        <script>
+                        // (Removed duplicate/old filterDropdownOptions)
+                        </script>
+                <div class="form-actions">
+                    <button type="submit" class="button">🚀 Bulk Create Metrics</button>
+                    <button type="button" class="button secondary" onclick="showTab('home')">← Back to Home</button>
+                </div>
+            </form>
         </div>
 
         <!-- Home Tab - Utility Selector -->
