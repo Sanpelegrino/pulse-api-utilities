@@ -1640,6 +1640,35 @@ def index():
     """Main page with Pulse Definition Copier UI"""
     return render_template('index.html')
 
+@app.route('/get_datasources', methods=['POST'])
+def get_datasources():
+    try:
+        data = request.get_json()
+        host = data.get('server_host')
+        site_content_url = data.get('site_content_url')
+        pat_name = data.get('pat_name') or data.get('pat_token')
+        pat_token = data.get('pat_token')
+        api_version = data.get('api_version') or API_VERSION
+
+        # Validate host URL
+        if not host or not host.startswith('http'):
+            return jsonify({'success': False, 'error': 'Invalid Tableau Server URL. Please include https://'}), 400
+
+        # Authenticate using PAT only
+        token, site_id = sign_in_rest(host, site_content_url, pat_name=pat_name, pat_secret=pat_token)
+
+        # Fetch datasources
+        result = get_all_datasources_rest(host, token, site_id, api_version)
+
+        # Convert mapping to list for dropdown
+        if result.get('success') and 'datasources' in result:
+            ds_map = result['datasources']
+            ds_list = [{'id': k, 'name': v} for k, v in ds_map.items()]
+            result['datasources'] = ds_list
+        return jsonify(result)
+    except Exception as e:
+        return jsonify({'success': False, 'error': str(e)})
+
 @app.route('/api/hello')
 def api_hello():
     """API endpoint that returns JSON hello message"""
@@ -4497,5 +4526,4 @@ def zero_follower_metrics():
 
 if __name__ == '__main__':
     # Run the Flask development server
-    port = int(os.environ.get('PORT', '3000'))
-    app.run(debug=True, host='0.0.0.0', port=port)
+    app.run(debug=True, host='0.0.0.0', port=3000)

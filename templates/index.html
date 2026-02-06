@@ -548,6 +548,13 @@
                             <input type="password" id="bulk_pat_token" name="pat_token" placeholder="PAT Token">
                         </div>
                     </div>
+                    <div class="form-row">
+                        <button type="button" class="button" id="loadDatasourcesBtn" onclick="loadDatasources()">🔄 Load Data Sources</button>
+                        <span id="datasourceLoading" style="display:none; margin-left:10px;">Loading...</span>
+                    </div>
+                    <div class="form-row">
+                        <span id="datasourceError" style="color:#b91c1c; display:none;"></span>
+                    </div>
                 </div>
 
                 <!-- Searchable Dropdown Section -->
@@ -558,12 +565,9 @@
                             <div class="dropdown-selected" id="dropdownSelected" onclick="toggleDropdown()">Select a published data source...</div>
                             <div class="dropdown-list" id="dropdownList" style="display:none; width:100%; position:absolute; z-index:10; background:#fff; border:1px solid #d1d5db; border-radius:6px; max-height:200px; overflow-y:auto;">
                                 <input type="text" id="dropdownSearch" placeholder="Search data sources..." style="width:98%; margin:8px 1%; padding:8px; border-radius:4px; border:1px solid #e5e7eb;" onkeyup="filterDropdownOptions()">
-                                <div class="dropdown-option" onclick="selectDropdownOption('Sales Pipeline Data')">Sales Pipeline Data</div>
-                                <div class="dropdown-option" onclick="selectDropdownOption('Customer 360 Master')">Customer 360 Master</div>
-                                <div class="dropdown-option" onclick="selectDropdownOption('Marketing Campaign Results')">Marketing Campaign Results</div>
-                                <div class="dropdown-option" onclick="selectDropdownOption('Product Inventory')">Product Inventory</div>
-                                <div class="dropdown-option" onclick="selectDropdownOption('Employee Directory')">Employee Directory</div>
-                                <div class="dropdown-option" onclick="selectDropdownOption('Financial Transactions 2025')">Financial Transactions 2025</div>
+                                <div id="dropdownOptionsContainer">
+                                    <!-- Datasource options will be injected here -->
+                                </div>
                             </div>
                             <input type="hidden" id="metricDropdownValue" name="metricDropdown">
                         </div>
@@ -595,16 +599,75 @@
                                 }
                                 </style>
                                 <script>
+                                        // Load datasources from backend and populate dropdown
+                                        function loadDatasources() {
+                                            document.getElementById('datasourceLoading').style.display = 'inline-block';
+                                            document.getElementById('datasourceError').style.display = 'none';
+                                            // Gather auth info
+                                            var host = document.getElementById('bulk_host').value.trim();
+                                            var site = document.getElementById('bulk_site').value.trim();
+                                            var authMethod = document.getElementById('bulk_auth_method').value;
+                                            var username = document.getElementById('bulk_username').value.trim();
+                                            var password = document.getElementById('bulk_password').value;
+                                            var patName = document.getElementById('bulk_pat_name').value.trim();
+                                            var patToken = document.getElementById('bulk_pat_token').value;
+                                            var apiVersion = '3.24'; // Or make dynamic if needed
+
+                                            var payload = {
+                                                server_host: host,
+                                                site_content_url: site,
+                                                api_version: apiVersion,
+                                                auth_method: authMethod,
+                                                username: username,
+                                                password: password,
+                                                pat_name: patName,
+                                                pat_token: patToken
+                                            };
+
+                                            fetch('/get_datasources', {
+                                                method: 'POST',
+                                                headers: { 'Content-Type': 'application/json' },
+                                                body: JSON.stringify(payload)
+                                            })
+                                            .then(response => response.json())
+                                            .then(data => {
+                                                document.getElementById('datasourceLoading').style.display = 'none';
+                                                if (data.success) {
+                                                    var container = document.getElementById('dropdownOptionsContainer');
+                                                    container.innerHTML = '';
+                                                    if (data.datasources.length === 0) {
+                                                        container.innerHTML = '<div class="dropdown-option" style="color:#b91c1c;">No data sources found</div>';
+                                                    } else {
+                                                        data.datasources.forEach(function(ds) {
+                                                            var div = document.createElement('div');
+                                                            div.className = 'dropdown-option';
+                                                            div.textContent = ds.name;
+                                                            div.setAttribute('data-id', ds.id);
+                                                            div.onclick = function() { selectDropdownOption(ds.name, ds.id); };
+                                                            container.appendChild(div);
+                                                        });
+                                                    }
+                                                } else {
+                                                    document.getElementById('datasourceError').textContent = data.error || 'Failed to load data sources.';
+                                                    document.getElementById('datasourceError').style.display = 'inline-block';
+                                                }
+                                            })
+                                            .catch(err => {
+                                                document.getElementById('datasourceLoading').style.display = 'none';
+                                                document.getElementById('datasourceError').textContent = 'Error: ' + err;
+                                                document.getElementById('datasourceError').style.display = 'inline-block';
+                                            });
+                                        }
                                 // Custom dropdown logic
                                 function toggleDropdown() {
                                     var list = document.getElementById('dropdownList');
                                     list.style.display = (list.style.display === 'none' || list.style.display === '') ? 'block' : 'none';
                                 }
-                                function selectDropdownOption(val) {
-                                    document.getElementById('dropdownSelected').innerText = val;
-                                    document.getElementById('metricDropdownValue').value = val;
-                                    document.getElementById('dropdownList').style.display = 'none';
-                                }
+        function selectDropdownOption(name, id) {
+            document.getElementById('dropdownSelected').innerText = name;
+            document.getElementById('metricDropdownValue').value = id;
+            document.getElementById('dropdownList').style.display = 'none';
+        }
                                 function filterDropdownOptions() {
                                     var input = document.getElementById('dropdownSearch');
                                     var filter = input.value.toLowerCase();
